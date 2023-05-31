@@ -1,6 +1,7 @@
 'use strict'
 
 const setupFirebaseAdminSDKApp = require('./firebase-admin.application')
+const setupMongoDB = require('./mongo-client');
 
 module.exports = () => {
   const adminSDK = setupFirebaseAdminSDKApp()
@@ -9,9 +10,12 @@ module.exports = () => {
   const dbInstance = adminSDK.firestore()
   const bucket = adminSDK.storage().bucket()
 
+  const clientMongo = setupMongoDB();
+
   return {
     adminAuth,
     dbInstance,
     bucket,
+    clientMongo,
   }
 }
