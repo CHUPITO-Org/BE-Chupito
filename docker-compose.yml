@@ -4,8 +4,7 @@ services:
   mongo:
     image: mongo:latest
     ports:
-      - '27030:27017'
-    command: mongod --auth
+      - '27017:27017'
     environment:
       - MONGO_INITDB_ROOT_USERNAME=mongoDev
       - MONGO_INITDB_ROOT_PASSWORD=Passw0rd
