@@ -11,6 +11,8 @@ const get = async (request, response) => {
   let responseCode = 500
   let responseData
 
+  console.log('ACAAAAAAAA')
+  console.log(request)
   // TODO: Move all validations for a specific function
   eventParameters.year = !request.query.year ? new Date().getFullYear() : request.query.year
 

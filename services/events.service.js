@@ -1,9 +1,8 @@
-'use strict';
+'use strict'
 
-const BaseService = require('./base.service');
+const BaseService = require('./base.service')
 
 class EventsService extends BaseService {
-
   constructor(dbInstance) {
     super()
     this.collection = dbInstance.collection('events')
@@ -30,31 +29,24 @@ class EventsService extends BaseService {
       /* eslint-disable no-console */
       // console.error('Error creating an event: ', err)
       /* eslint-enable */
-      response = this.getErrorResponse(errorMessage);
+      response = this.getErrorResponse(errorMessage)
     }
 
-    return response;
+    return response
   }
 
   async doList(eventParams) {
     let allEvents = []
     let response
 
-    const {
-      year,
-      withAttendees,
-      headquarterId,
-      showAllStatus
-    } = eventParams
-
-    if (!year) {
-      // TODO: Create a constants object and replace this message
-      throw new Error('Missing parameter')
-    }
+    const { year, withAttendees, headquarterId, showAllStatus } = eventParams
 
     try {
+      let rootQuery = this.collection
 
-      let rootQuery = this.collection.where('year', '==', parseInt(year, 10))
+      if (year) {
+        rootQuery.where('year', '==', parseInt(year, 10))
+      }
 
       if (headquarterId) {
         rootQuery = rootQuery.where('headquarter.id', '==', headquarterId)
@@ -62,29 +54,28 @@ class EventsService extends BaseService {
 
       const dataSnapshot = await rootQuery.get()
 
-      dataSnapshot.forEach((doc) => {
+      dataSnapshot.forEach(doc => {
         const event = {
           id: doc.id,
-          ...doc.data()
-        };
+          ...doc.data(),
+        }
 
         if (!withAttendees) {
           if (showAllStatus || event.status !== 'closed') {
-            allEvents.push(event);
+            allEvents.push(event)
           }
         } else {
           if (event.attendees && event.attendees.length > 0) {
             if (showAllStatus || event.status !== 'closed') {
-              allEvents.push(event);
+              allEvents.push(event)
             }
           }
         }
-      });
+      })
 
       // TODO: Create a constants object and replace this message
       const successMessage = 'Getting all events successfully'
       response = this.getSuccessResponse(allEvents, successMessage)
-
     } catch (err) {
       const errorMessage = 'Error getting all events'
       /* eslint-disable no-console */
@@ -93,7 +84,7 @@ class EventsService extends BaseService {
       response = this.getErrorResponse(errorMessage)
     }
 
-    return response;
+    return response
   }
 
   async getEventData(id) {
@@ -135,28 +126,28 @@ class EventsService extends BaseService {
 
   filteredEventImages(event, deletedImages) {
     if (!event.images || (event.images && event.images.length === 0)) {
-      return [];
+      return []
     }
 
-    let filteredImages = [];
+    let filteredImages = []
     for (let i = 0; i < event.images.length; i++) {
-      let found = false;
+      let found = false
       for (let j = 0; j < deletedImages.length; j++) {
         if (event.images[i].id !== deletedImages[j]) {
-          continue;
+          continue
         }
 
         if (event.images[i].id === deletedImages[j]) {
-          found = true;
-          break;
+          found = true
+          break
         }
       }
       if (!found) {
-        filteredImages.push(event.images[i]);
+        filteredImages.push(event.images[i])
       }
     }
 
-    return filteredImages;
+    return filteredImages
   }
 
   async update(id, data) {
@@ -172,7 +163,6 @@ class EventsService extends BaseService {
     }
 
     try {
-
       if (deletedImages.length > 0) {
         const existingEventData = await this.getEventData(id)
         // TODO: Implement here a call for removing image in firebase storage
@@ -185,7 +175,7 @@ class EventsService extends BaseService {
 
       eventData = {
         id: id,
-        ...eventRef.data()
+        ...eventRef.data(),
       }
 
       const successMessage = 'Event was updated successfully'
@@ -208,8 +198,7 @@ class EventsService extends BaseService {
     try {
       const dataSnapshot = await this.collection.doc(id).get()
 
-      event = dataSnapshot.exists ?
-        dataSnapshot.data() : null
+      event = dataSnapshot.exists ? dataSnapshot.data() : null
       event.id = id
 
       if (!event.images) {
@@ -219,7 +208,7 @@ class EventsService extends BaseService {
       for (let index = 0; index < images.length; index++) {
         event.images.push({
           id: images[index].id,
-          url: images[index].url
+          url: images[index].url,
         })
       }
 
@@ -245,22 +234,22 @@ class EventsService extends BaseService {
     let response
 
     try {
-      const dataSnapshot = await this.collection.doc(id).get();
+      const dataSnapshot = await this.collection.doc(id).get()
 
-      event = dataSnapshot.exists ? dataSnapshot.data() : null;
+      event = dataSnapshot.exists ? dataSnapshot.data() : null
 
       if (!event) {
-        throw new Error({message: `The event id ${id} was not found`})
+        throw new Error({ message: `The event id ${id} was not found` })
       }
 
-      event.id = id;
+      event.id = id
 
       const imageIndex = event.images.findIndex(image => {
-        return image.id === idImage;
+        return image.id === idImage
       })
 
       if (imageIndex < 0) {
-        throw new Error({message: `The image id ${id} was not found`})
+        throw new Error({ message: `The image id ${id} was not found` })
       }
 
       event.images.splice(imageIndex, 1)
@@ -283,7 +272,7 @@ class EventsService extends BaseService {
   }
 
   async open(id) {
-    return await this.setStatus(id, 'opened');
+    return await this.setStatus(id, 'opened')
   }
 
   async pause(id) {
@@ -303,7 +292,7 @@ class EventsService extends BaseService {
       const event = dataSnapshot.exists ? dataSnapshot.data() : null
 
       if (!event) {
-        throw new Error({message: `The event id ${id} was not found`})
+        throw new Error({ message: `The event id ${id} was not found` })
       }
 
       event.id = id
@@ -316,7 +305,7 @@ class EventsService extends BaseService {
       response = this.getSuccessResponse(event, successMessage)
     } catch (err) {
       // TODO: Create a constants object and replace this message
-      const errorMessage = 'Error while changing event\'s status'
+      const errorMessage = "Error while changing event's status"
       /* eslint-disable no-console */
       // console.error(errorMessage, err);
       /* eslint-enable */
@@ -330,16 +319,16 @@ class EventsService extends BaseService {
     let response
 
     try {
-      let dataSnapshot = await this.collection.doc(id).get();
+      let dataSnapshot = await this.collection.doc(id).get()
 
       const event = dataSnapshot.exists ? dataSnapshot.data() : null
 
       if (!event) {
-        throw new Error({message: `The event id ${id} was not found`})
+        throw new Error({ message: `The event id ${id} was not found` })
       }
 
       if (!event.attendees) {
-        event.attendees = [];
+        event.attendees = []
       }
 
       attendees.map(attendee => {
@@ -377,16 +366,15 @@ class EventsService extends BaseService {
       const successMessage = 'Event successfully deleted'
       response = this.getSuccessResponse({}, successMessage)
     } catch (err) {
-      const errorMessage = 'Error removing event';
+      const errorMessage = 'Error removing event'
       /* eslint-disable no-console */
       // console.error(errorMessage, err);
       /* eslint-enable */
       response = this.getErrorResponse(errorMessage)
     }
 
-    return response;
+    return response
   }
-
 }
 
 module.exports = EventsService

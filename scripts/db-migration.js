@@ -10,6 +10,18 @@ const eventsService = serviceContainer('events')
 //TODO:
 // Function to fetch data from Firebase
 
+const launch = async () => {
+  const headquiarer = await headquartersService.doList()
+  console.log(headquiarer)
+
+  const eventParameters = {}
+
+  const events = await eventsService.doList(eventParameters)
+  console.log(events)
+}
+
+launch()
+
 // Function to map Firebase data to MongoDB document structure
 
 // Function to save data to MongoDB
