@@ -1,16 +1,13 @@
 // Import required modules
-const { firestore } = require('firebase-admin')
-const setupFirebaseAdminSDKApp = require('../providers/firebase-admin.application')
-const setupMongoDB = require('../providers/mongo-client');
-
+const setupMongoDB = require('../providers/mongo-client')
+const serviceContainer = require('../services/service.container')
 
 // Connection configurations
-const adminSDK = setupFirebaseAdminSDKApp()
-const firestoredb = adminSDK.firestore()
 const MongoClient = setupMongoDB()
+const headquartersService = serviceContainer('headquarters')
+const eventsService = serviceContainer('events')
 
-// Connect to Firebase and MongoDB
-
+//TODO:
 // Function to fetch data from Firebase
 
 // Function to map Firebase data to MongoDB document structure
