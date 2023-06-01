@@ -1,12 +1,9 @@
 'use strict'
 
 const { MongoClient } = require('mongodb')
-const dotenv = require('dotenv')
 const environment = require('../environment')
 
-dotenv.config()
-
-let client = null
+let client;
 
 module.exports = async () => {
   if (!client) {
