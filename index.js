@@ -22,8 +22,6 @@ const normalizePort = val => {
 let port = normalizePort(process.env.PORT || 5002)
 app.set('port', port)
 
-console.log('mongo connection: ', process.env.MONGODB_URI)
-
 /**
  * Create HTTP server.
  */
