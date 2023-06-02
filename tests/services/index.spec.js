@@ -34,7 +34,6 @@ test.beforeEach(() => {
     './headquarters.service': sandbox.stub(),
     './storage.service': () => {},
     './accounts.service': () => {},
-    './transactions.service': () => {},
   })
   database = setupDatabase()
 })

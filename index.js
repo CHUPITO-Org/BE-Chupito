@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 const http = require('http')
 const app = require('./app')
 
@@ -23,6 +21,8 @@ const normalizePort = val => {
 //This can receive the port number from .env, in which case it will be a string
 let port = normalizePort(process.env.PORT || 5002)
 app.set('port', port)
+
+console.log('mongo connection: ', process.env.MONGODB_URI)
 
 /**
  * Create HTTP server.

@@ -12,9 +12,6 @@ const serviceContainer = proxyquire('./../../services/service.container', {
       userService: {
         create: () => {},
       },
-      transactionsService: {
-        makeTransaction: () => {},
-      },
       authCodesService: {
         getAccessTokenByAuthCode: () => {},
         getAccessTokenByRefreshToken: () => {},
@@ -45,12 +42,6 @@ test.serial('Not service found', t => {
     { instanceOf: Error }
   )
   t.is(error.message, 'Invalid Service')
-})
-
-test.serial('Check transactions service', t => {
-  const transactionsService = serviceContainer('transactions')
-
-  t.true(transactionsService.hasOwnProperty('makeTransaction'), 'Expected makeTransaction property')
 })
 
 test.serial('Check auth code service', t => {

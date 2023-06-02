@@ -4,9 +4,10 @@ const BaseController = require('../base.controller')
 const serviceContainer = require('../../../services/service.container')
 
 let baseController = new BaseController()
-const rolesService = serviceContainer('roles')
 
 const get = async (request, response) => {
+  const rolesService = await serviceContainer('roles')
+
   let responseCode
   let responseData
 
