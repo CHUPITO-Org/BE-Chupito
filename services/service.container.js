@@ -1,53 +1,49 @@
-'use strict';
+'use strict'
 
-const setupDBService = require('./');
+const setupDBService = require('./')
 
-module.exports = function getContainer(service) {
-  const dbService = setupDBService();
+module.exports = async function getContainer(service) {
+  const dbService = await setupDBService()
 
   if (service === 'events') {
-    return dbService.eventsService;
+    return dbService.eventsService
   }
 
   if (service === 'authentication') {
-    return dbService.authenticationService;
+    return dbService.authenticationService
   }
 
   if (service === 'attendees') {
-    return dbService.attendeesService;
+    return dbService.attendeesService
   }
 
   if (service === 'headquarters') {
-    return dbService.headquartersService;
+    return dbService.headquartersService
   }
 
   if (service === 'roles') {
-    return dbService.rolesService;
+    return dbService.rolesService
   }
 
   if (service === 'storage') {
-    return dbService.storageService;
+    return dbService.storageService
   }
 
   if (service === 'users') {
-    return dbService.userService;
+    return dbService.userService
   }
 
   if (service === 'accounts') {
-    return dbService.accountsService;
+    return dbService.accountsService
   }
 
   if (service === 'session') {
-    return dbService.sessionService;
-  }
-
-  if (service === 'transactions') {
-    return dbService.transactionsService;
+    return dbService.sessionService
   }
 
   if (service === 'authCode') {
-    return dbService.authCodesService;
+    return dbService.authCodesService
   }
 
-  throw new Error('Invalid Service');
-};
+  throw new Error('Invalid Service')
+}

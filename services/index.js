@@ -11,11 +11,10 @@ const HeadquartersService = require('./headquarters.service')
 const setupStorageService = require('./storage.service')
 const setupAccountsService = require('./accounts.service')
 const setupSessionService = require('./session.service')
-const setupTransactionsService = require('./transactions.service')
 const setupAuthCodeService = require('./auth.codes.service')
 
-module.exports = () => {
-  const serviceProviders = setupServiceProviders()
+module.exports = async () => {
+  const serviceProviders = await setupServiceProviders()
 
   const authenticationService = new AuthenticationService(serviceProviders.adminAuth)
   const userService = new UserService(serviceProviders.dbInstance)
@@ -26,7 +25,6 @@ module.exports = () => {
   const storageService = setupStorageService(serviceProviders.bucket)
   const accountsService = setupAccountsService(serviceProviders.dbInstance)
   const sessionService = setupSessionService(serviceProviders.adminAuth)
-  const transactionsService = setupTransactionsService(serviceProviders.dbInstance)
   const authCodesService = setupAuthCodeService(
     serviceProviders.adminAuth,
     serviceProviders.dbInstance
@@ -43,6 +41,5 @@ module.exports = () => {
     storageService,
     userService,
     sessionService,
-    transactionsService,
   }
 }

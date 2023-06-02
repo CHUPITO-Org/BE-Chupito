@@ -1,10 +1,12 @@
 'use strict'
 
 const { parse } = require('json2csv')
-const setupDBService = require('../../../services')
-const dbService = setupDBService()
+
+const serviceContainer = require('../../../services/service.container')
 
 const get = async (request, response) => {
+  const eventsService = await serviceContainer('events')
+
   if (!request.params.id) {
     return response
       .status(200)
@@ -129,7 +131,7 @@ const get = async (request, response) => {
   }
 
   try {
-    let eventResponse = await dbService.eventsService.findById(id)
+    let eventResponse = await eventsService.findById(id)
 
     const event = eventResponse.data
 

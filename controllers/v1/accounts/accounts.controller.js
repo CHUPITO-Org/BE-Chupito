@@ -4,13 +4,14 @@ const BaseController = require('../base.controller')
 const serviceContainer = require('../../../services/service.container')
 
 const baseController = new BaseController()
-const accountsService = serviceContainer('accounts')
-const sessionService = serviceContainer('session')
 
 let responseCode
 let responseData
 
 const checkBalance = async (request, response) => {
+  const accountsService = await serviceContainer('accounts')
+  const sessionService = await serviceContainer('session')
+
   if (!baseController.isTokenInHeader(request)) {
     // prettier-ignore
     return response.status(403).json(
@@ -47,6 +48,9 @@ const checkBalance = async (request, response) => {
 }
 
 const getAll = async (request, response) => {
+  const accountsService = await serviceContainer('accounts')
+  const sessionService = await serviceContainer('session')
+
   if (!baseController.isTokenInHeader(request)) {
     // prettier-ignore
     return response.status(400).json(

@@ -4,10 +4,10 @@ const BaseController = require('../base.controller')
 const serviceContainer = require('../../../services/service.container')
 
 let baseController = new BaseController()
-const eventsService = serviceContainer('events')
-const storageService = serviceContainer('storage')
 
 const get = async (request, response) => {
+  const eventsService = await serviceContainer('events')
+
   if (!request.params.id) {
     return response.status(400).json(baseController.getErrorResponse('Missing eventId parameter'))
   }
@@ -31,6 +31,8 @@ const get = async (request, response) => {
 }
 
 const post = async (request, response) => {
+  const eventsService = await serviceContainer('events')
+
   let eventData = {}
   let responseData
   let responseCode
@@ -72,6 +74,8 @@ const post = async (request, response) => {
 }
 
 const update = async (request, response) => {
+  const eventsService = await serviceContainer('events')
+
   let eventData = {}
   let responseData
   let responseCode
@@ -127,6 +131,8 @@ const update = async (request, response) => {
 }
 
 const updateImages = async (request, response) => {
+  const eventsService = await serviceContainer('events')
+
   if (!request.body.images) {
     return response.status(400).json(baseController.getErrorResponse('No images sent'))
   }
@@ -151,6 +157,8 @@ const updateImages = async (request, response) => {
 }
 
 const deleteImage = async (request, response) => {
+  const eventsService = await serviceContainer('events')
+
   if (!request.params.id || !request.params.idImage) {
     return response.status(400).json(baseController.getErrorResponse('Wrong parameters'))
   }
@@ -177,6 +185,8 @@ const deleteImage = async (request, response) => {
 }
 
 const open = async (request, response) => {
+  const eventsService = await serviceContainer('events')
+
   if (!request.params.id) {
     return response.status(400).json(baseController.getErrorResponse('Wrong parameters'))
   }
@@ -201,6 +211,8 @@ const open = async (request, response) => {
 }
 
 const pause = async (request, response) => {
+  const eventsService = await serviceContainer('events')
+
   if (!request.params.id) {
     return response.status(400).json(baseController.getErrorResponse('Wrong parameters'))
   }
@@ -224,6 +236,8 @@ const pause = async (request, response) => {
 }
 
 const close = async (request, response) => {
+  const eventsService = await serviceContainer('events')
+
   if (!request.params.id) {
     return response.status(400).json(baseController.getErrorResponse('Wrong parameters'))
   }
@@ -249,6 +263,8 @@ const close = async (request, response) => {
 }
 
 const addAttendees = async (request, response) => {
+  const eventsService = await serviceContainer('events')
+
   if (!request.params.id || !request.body.attendees) {
     return response.status(400).json(baseController.getErrorResponse('Wrong parameters'))
   }
@@ -278,6 +294,9 @@ const addAttendees = async (request, response) => {
 }
 
 const remove = async (request, response) => {
+  const eventsService = await serviceContainer('events')
+  const storageService = await serviceContainer('storage')
+
   if (!request.params.id) {
     return response.status(400).json(baseController.getErrorResponse('Wrong parameters'))
   }

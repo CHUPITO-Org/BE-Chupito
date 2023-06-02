@@ -2,12 +2,11 @@
 
 const serviceContainer = require('../../../services/service.container')
 
-const dbService = serviceContainer('authCode')
-
 const authorizationCodeGrantType = 'authorization_code'
 const refreshTokenGrantType = 'refresh_token'
 
 const handleAuthorizationCodeGrantType = async code => {
+  const dbService = await serviceContainer('authCode')
   if (!code) {
     return { responseCode: 404, data: {} }
   }
@@ -15,6 +14,8 @@ const handleAuthorizationCodeGrantType = async code => {
 }
 
 const handleRefreshTokenGrantType = async refreshToken => {
+  const dbService = await serviceContainer('authCode')
+
   if (!refreshToken) {
     return { responseCode: 404, data: {} }
   }

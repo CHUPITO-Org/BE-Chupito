@@ -4,9 +4,10 @@ const BaseController = require('../base.controller')
 const serviceContainer = require('../../../services/service.container')
 
 let baseController = new BaseController()
-const eventsService = serviceContainer('events')
 
 const get = async (request, response) => {
+  const eventsService = await serviceContainer('events')
+
   const eventParameters = {}
   let responseCode = 500
   let responseData

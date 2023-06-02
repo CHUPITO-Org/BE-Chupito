@@ -1,0 +1,15 @@
+# Exclude everything
+*
+
+# Include only required files
+!controllers/
+!models/
+!providers/
+!services/
+!services-config/
+!.env
+!app.js
+!environment.js
+!index.js
+!package.json
+!yarn.lock

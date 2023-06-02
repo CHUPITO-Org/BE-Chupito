@@ -4,12 +4,13 @@ const BaseController = require('../base.controller')
 const serviceContainer = require('../../../services/service.container')
 
 let baseController = new BaseController()
-const authenticationService = serviceContainer('authentication')
 
 let responseCode
 let responseData
 
 const revokeToken = async (request, response) => {
+  const authenticationService = await serviceContainer('authentication')
+
   if (!baseController.isTokenInHeader(request)) {
     return response.status(400).json(baseController.getErrorResponse('No session information'))
   }
