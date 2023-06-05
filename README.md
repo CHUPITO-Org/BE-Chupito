@@ -27,7 +27,7 @@ For MacOS:
 
 ```bash
 brew install nvm
-nvm install v18
+nvm install v18.16.0
 ```
 
 ## Getting started
@@ -44,16 +44,22 @@ For local develpment, you should copy .env.example and use environment variables
 | **CLIENT_ID:**          | Identifier for client connection |
 | **CLIENT_CERT_URL:**          | Cert URL for Google identification |
 
-Finally, use the following command to run the application
+Use the following command every time you need to run a npm package.
 
 ```bash
-yarn start
+nvm use
 ```
 
-If you need to reload the application on each change, use the following command
+If you need to reload the application on each change, use the following command:
 
 ```bash
 yarn dev
+```
+
+Finally, use the following command to run the application without reloading on each change:
+
+```bash
+yarn start
 ```
 
 ### Debugging

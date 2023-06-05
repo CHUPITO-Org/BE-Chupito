@@ -5,10 +5,10 @@ const BaseController = require('../base.controller')
 const serviceContainer = require('../../../services/service.container')
 
 let baseController = new BaseController()
-const userService = serviceContainer('users')
-const authenticationService = serviceContainer('authentication')
 
 const get = async (request, response) => {
+  const userService = await serviceContainer('users')
+
   if (!request.params.id) {
     return response.status(400).json(baseController.getErrorResponse('Parameter is missing'))
   }
@@ -32,6 +32,8 @@ const get = async (request, response) => {
 }
 
 const getByUid = async (request, response) => {
+  const userService = await serviceContainer('users')
+
   if (!request.body.uid) {
     return response.status(400).json(baseController.getErrorResponse('Parameters are missing'))
   }
@@ -47,6 +49,8 @@ const getByUid = async (request, response) => {
 }
 
 const post = async (request, response) => {
+  const userService = await serviceContainer('users')
+
   if (!request.body.name || !request.body.lastName || !request.body.email || !request.body.uid) {
     return response.status(400).json(baseController.getErrorResponse('Parameters are missing'))
   }
@@ -72,6 +76,8 @@ const post = async (request, response) => {
 }
 
 const update = async (request, response) => {
+  const userService = await serviceContainer('users')
+
   if (!request.params.id) {
     return response.status(400).json(baseController.getErrorResponse('Parameter is missing'))
   }
@@ -125,6 +131,9 @@ const update = async (request, response) => {
 }
 
 const remove = async (request, response) => {
+  const userService = await serviceContainer('users')
+  const authenticationService = serviceContainer('authentication')
+
   if (!request.params.id) {
     return response.status(400).json(baseController.getErrorResponse('Parameter is missing'))
   }
@@ -155,6 +164,8 @@ const remove = async (request, response) => {
 }
 
 const changePassword = async (request, response) => {
+  const authenticationService = serviceContainer('authentication')
+
   if (
     !request.body.id ||
     !request.body.uid ||

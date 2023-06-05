@@ -4,9 +4,10 @@ const BaseController = require('../base.controller')
 const serviceContainer = require('../../../services/service.container')
 
 let baseController = new BaseController()
-const headquartersService = serviceContainer('headquarters')
 
 const get = async (request, response) => {
+  const headquartersService = await serviceContainer('headquarters')
+
   if (!request.params.id) {
     return response.status(400).json(baseController.getErrorResponse('Parameter is missing'))
   }

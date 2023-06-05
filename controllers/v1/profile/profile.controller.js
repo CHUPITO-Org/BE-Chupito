@@ -4,13 +4,14 @@ const BaseController = require('../base.controller')
 const serviceContainer = require('../../../services/service.container')
 
 const baseController = new BaseController()
-const sessionService = serviceContainer('session')
-const userService = serviceContainer('users')
 
 let responseCode
 let responseData
 
 const get = async (request, response) => {
+  const sessionService = await serviceContainer('session')
+  const userService = await serviceContainer('users')
+
   // Access forbidden
   if (!baseController.isTokenInHeader(request)) {
     return response.status(403).json(baseController.getErrorResponse('No session information'))

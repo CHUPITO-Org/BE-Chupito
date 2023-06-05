@@ -1,12 +1,13 @@
 'use strict'
 
 const BaseController = require('../base.controller')
-const setupDBService = require('../../../services')
+const serviceContainer = require('../../../services/service.container')
 
 const baseController = new BaseController()
-const dbService = setupDBService()
 
 const post = async (request, response) => {
+  const storageService = await serviceContainer('storage')
+
   if (!request.files || request.files.length === 0) {
     return response.status(400).json(baseController.getErrorResponse('No files were uploaded'))
   }
@@ -20,7 +21,7 @@ const post = async (request, response) => {
 
     const file = request.files[key]
     try {
-      const result = await dbService.storageService.upload(file)
+      const result = await storageService.upload(file)
 
       if (result.data.url === '') {
         const errorMessage =
@@ -42,6 +43,8 @@ const post = async (request, response) => {
 }
 
 const erase = async (request, response) => {
+  const storageService = await serviceContainer('storage')
+
   if (!request.params.id) {
     return response
       .status(400)
@@ -52,7 +55,7 @@ const erase = async (request, response) => {
   let responseData
 
   try {
-    const result = await dbService.storageService.erase(request.params.id)
+    const result = await storageService.erase(request.params.id)
 
     responseCode = result.responseCode
     responseData = baseController.getSuccessResponse({}, result.message)

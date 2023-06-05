@@ -7,7 +7,7 @@ const proxyquire = require('proxyquire')
 let sandbox = null
 let database = null
 
-test.beforeEach(() => {
+test.beforeEach(async () => {
   sandbox = sinon.createSandbox()
 
   const getMockProviders = () => {
@@ -34,9 +34,8 @@ test.beforeEach(() => {
     './headquarters.service': sandbox.stub(),
     './storage.service': () => {},
     './accounts.service': () => {},
-    './transactions.service': () => {},
   })
-  database = setupDatabase()
+  database = await setupDatabase()
 })
 
 test.afterEach(() => {
@@ -44,7 +43,7 @@ test.afterEach(() => {
   database = null
 })
 
-test('Check database services', t => {
+test('Check database services', async t => {
   t.is(database.hasOwnProperty('authenticationService'), true, 'Expected authentication service')
   t.is(database.hasOwnProperty('userService'), true, 'Expected user service')
   t.is(database.hasOwnProperty('attendeesService'), true, 'Expected attendee service')

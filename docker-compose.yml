@@ -2,9 +2,14 @@ version: '3.7'
 
 services:
   mongo:
-    image: mongo:latest
+    image: mongo:6.0.6
     ports:
       - '27017:27017'
     environment:
       - MONGO_INITDB_ROOT_USERNAME=mongoDev
       - MONGO_INITDB_ROOT_PASSWORD=Passw0rd
+    volumes:
+      - 'chupito_mongo_data:/data/db'
+
+volumes:
+  chupito_mongo_data: null
