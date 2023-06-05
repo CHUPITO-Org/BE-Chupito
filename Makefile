@@ -26,9 +26,13 @@ interactive: ## get a bash shell in the container
 	docker run -it --workdir="$(LOCAL_APP_FOLDER)" \
 		$(LOCAL_IMAGE_NAME):latest ls -al
 
-.PHONY: launch
-launch: docker-clean ## launch the multi-container on local machine
+.PHONY: launch-db
+launch-db: docker-clean ## launch the multi-container on local machine
 	docker-compose -f docker-compose.yml up
+
+.PHONY: launch-local
+launch-local: docker-clean ## launch the multi-container on local machine
+	docker-compose -f docker-compose.yml -f docker-compose.local.yml up
 
 .PHONY: help
 help:  ## show all make commands

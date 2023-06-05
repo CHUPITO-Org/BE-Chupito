@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+  api:
+    container_name: conference-bff
+    image: ms-conference-bff:latest
+    ports:
+      - "5002:5002"
+    tty: true
+    working_dir: "/application"
+    depends_on:
+      - mongo
+    environment:
+      - MONGODB_URI='mongodb://mongoDev:Passw0rd@mongo:27017/?authSource=admin'
+    volumes:
+      - ".:/application:rw"

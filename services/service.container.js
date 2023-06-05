@@ -45,5 +45,5 @@ module.exports = async function getContainer(service) {
     return dbService.authCodesService
   }
 
-  throw new Error('Invalid Service')
+  Promise.reject(new TypeError('Invalid Service'))
 }
