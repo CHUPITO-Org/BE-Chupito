@@ -5,14 +5,16 @@ const logger = require('./logger').createLogger('development.log');
 
 // Connection configurations
 const MongoClient = setupMongoDB();
-const headquartersService = serviceContainer('headquarters');
-const eventsService = serviceContainer('events');
 
 //TODO:
 // Function to fetch data from Firebase
 
 const launch = async () => {
+  const headquartersService = await serviceContainer('headquarters');
+  const eventsService = await serviceContainer('events');
+
   const headquiarer = await headquartersService.doList();
+
   logger.info(headquiarer);
 
   const eventParameters = {};
