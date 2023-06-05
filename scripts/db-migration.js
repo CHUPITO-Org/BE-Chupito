@@ -1,7 +1,6 @@
 // Import required modules
 const setupMongoDB = require('../providers/mongo-client');
 const serviceContainer = require('../services/service.container');
-const logger = require('./logger').createLogger('development.log');
 
 // Connection configurations
 const MongoClient = setupMongoDB();
@@ -15,12 +14,9 @@ const launch = async () => {
 
   const headquiarer = await headquartersService.doList();
 
-  logger.info(headquiarer);
-
   const eventParameters = {};
 
   const events = await eventsService.doList(eventParameters);
-  logger.info(events);
 };
 
 launch();
