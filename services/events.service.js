@@ -175,46 +175,33 @@ class EventsService extends BaseService {
   }
 
   async updateImages(id, images) {
-    let event = null;
-    let response;
-
     try {
       const dataSnapshot = await this.collection.doc(id).get();
 
-      event = dataSnapshot.exists ? dataSnapshot.data() : null;
+      const event = dataSnapshot.exists ? dataSnapshot.data() : null;
+
+      if (!event) throw "Event doesn't exits";
+
       event.id = id;
 
       if (!event.images) {
         event.images = [];
       }
 
-      for (let index = 0; index < images.length; index++) {
-        event.images.push({
-          id: images[index].id,
-          url: images[index].url,
-        });
-      }
+      images.forEach(({ id, url }) => event.images.push({ id, url }));
 
       await this.collection.doc(id).update(event);
 
-      // TODO: Create a constants object and replace this message
-      const successMessage = 'Updated images successfully';
-      response = this.getSuccessResponse(event, successMessage);
+      return this.getSuccessResponse(event, 'Images updated successfully');
     } catch (err) {
-      // TODO: Create a constants object and replace this message
-      const errorMessage = 'Error updating event images information';
       /* eslint-disable no-console */
-      console.error(errorMessage, err);
       /* eslint-enable */
-      response = this.getErrorResponse(errorMessage);
+      return this.getErrorResponse('Error updating event images information');
     }
-
-    return response;
   }
 
   async deleteImage(id, idImage) {
     let event = null;
-    let response;
 
     try {
       const dataSnapshot = await this.collection.doc(id).get();
@@ -226,10 +213,6 @@ class EventsService extends BaseService {
       }
 
       event.id = id;
-
-      // const imageIndex = event.images.findIndex(image => {
-      //   return image.id === idImage;
-      // });
 
       const imageIndex = event.images.findIndex(({ id }) => {
         return id === idImage;
@@ -243,19 +226,13 @@ class EventsService extends BaseService {
 
       await this.collection.doc(id).update(event);
 
-      // TODO: Create a constants object and replace this message
-      const successMessage = 'Updated images successfully';
-      response = this.getSuccessResponse(event, successMessage);
+      return this.getSuccessResponse(event, 'Updated images successfully');
     } catch (err) {
-      // TODO: Create a constants object and replace this message
-      const errorMessage = 'Error updating event images information';
       /* eslint-disable no-console */
       // console.error(errorMessage, err)
       /* eslint-enable */
-      response = this.getErrorResponse(errorMessage);
+      return this.getErrorResponse('Error updating event images information');
     }
-
-    return response;
   }
 
   async open(id) {

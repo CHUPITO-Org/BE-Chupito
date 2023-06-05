@@ -1,6 +1,7 @@
 // Import required modules
 const setupMongoDB = require('../providers/mongo-client');
 const serviceContainer = require('../services/service.container');
+const logger = require('./logger').createLogger('development.log');
 
 // Connection configurations
 const MongoClient = setupMongoDB();
@@ -10,16 +11,14 @@ const eventsService = serviceContainer('events');
 //TODO:
 // Function to fetch data from Firebase
 
-//CAMBIAR EL CONSOLE LOG
-
 const launch = async () => {
   const headquiarer = await headquartersService.doList();
-  console.log(headquiarer);
+  logger.info(headquiarer);
 
   const eventParameters = {};
 
   const events = await eventsService.doList(eventParameters);
-  console.log(events);
+  logger.info(events);
 };
 
 launch();
