@@ -3,22 +3,22 @@ const { ObjectId } = require('mongodb');
 const setupMongoDB = require('../providers/mongo-client')
 const serviceContainer = require('../services/service.container')
 
-// Function to fetch data from Firebase
-
 const launch = async () => {
   const headquartersService = await serviceContainer('headquarters')
   const eventsService = await serviceContainer('events')
 
-  const headquiarer = await headquartersService.doList()
+  const headquarters = await headquartersService.doList()
 
   const eventParameters = {}
 
   const events = await eventsService.doList(eventParameters)
+
+  const mappedHeadquarters = mapHeadquartersToMongoDBDocument(headquarters)
+  const mappedEvents = mapEventsToMongoDBDocument(events, mappedHeadquarters)
 }
 
 launch()
 
-// Functions to map Firebase Events and headquarters data to MongoDB document structure
 const mapHeadquartersToMongoDBDocument = headquarters => {
   const mappedHeadquarters = headquarters.data.map(headquarter => {
     const mappedHeadquarter = {
@@ -52,6 +52,7 @@ const mapEventsToMongoDBDocument = (events, mappedheadquarters) => {
   return mappedEvents
 }
 
+// TODO:
 // Function to save data to MongoDB
 
 // Main function to perform the data migration
