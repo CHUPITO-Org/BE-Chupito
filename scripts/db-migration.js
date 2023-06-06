@@ -2,6 +2,11 @@ const { ObjectId } = require('mongodb');
 
 const setupMongoDB = require('../providers/mongo-client')
 const serviceContainer = require('../services/service.container')
+const mongoClient = require('../providers/mongo-client')
+const environment = require('../environment')
+
+const allEnvironVars = environment.getEnvironmentVariables()
+
 
 const launch = async () => {
   const headquartersService = await serviceContainer('headquarters')
@@ -15,9 +20,15 @@ const launch = async () => {
 
   const mappedHeadquarters = mapHeadquartersToMongoDBDocument(headquarters)
   const mappedEvents = mapEventsToMongoDBDocument(events, mappedHeadquarters)
+
+  await saveToMongoDB(mappedHeadquarters, allEnvironVars.HEADQUARTERS_COLLECTION)
+  await saveToMongoDB(mappedEvents, allEnvironVars.EVENTS_COLLECTION)
+  
+  console.log('Migration process finished')
 }
 
 launch()
+
 
 const mapHeadquartersToMongoDBDocument = headquarters => {
   const mappedHeadquarters = headquarters.data.map(headquarter => {
@@ -30,6 +41,8 @@ const mapHeadquartersToMongoDBDocument = headquarters => {
   
   return mappedHeadquarters
 }
+
+
 const mapEventsToMongoDBDocument = (events, mappedheadquarters) => {
   const mappedEvents = events.data.map(event => {
     const mappedEvent = {
@@ -53,14 +66,20 @@ const mapEventsToMongoDBDocument = (events, mappedheadquarters) => {
   return mappedEvents
 }
 
-// TODO:
-// Function to save data to MongoDB
 
-// Main function to perform the data migration
-//// Fetch data from Firebase
-//// Map Firebase data to MongoDB document structure
-//// Save the data to MongoDB
-//// Close Firebase connection
-//// Close MongoDB connection
+const saveToMongoDB = async (data, collectionName) => {
+    try {
+    const MongoClient = await setupMongoDB()
+    const db = MongoClient.db(allEnvironVars.DEFAULT_DB)
+    const collection = db.collection(collectionName)
+    
+    await db.createCollection(collectionName)
+    await collection.insertMany(data)
+    await MongoClient.close()
 
-// Run the data migration
+    console.log(collectionName + 'Data saved to MongoDB successfully')
+  } catch (error) {
+    console.error('Error saving data to MongoDB:', error)
+    throw new Error('Error saving data to MongoDB')
+  }
+}
