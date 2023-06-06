@@ -1,16 +1,44 @@
-// Import required modules
+const { ObjectId } = require('mongodb');
+
 const setupMongoDB = require('../providers/mongo-client')
 const serviceContainer = require('../services/service.container')
-
-// Connection configurations
-const MongoClient = setupMongoDB()
-const headquartersService = serviceContainer('headquarters')
-const eventsService = serviceContainer('events')
 
 //TODO:
 // Function to fetch data from Firebase
 
-// Function to map Firebase data to MongoDB document structure
+// Functions to map Firebase Events and headquarters data to MongoDB document structure
+const mapHeadquartersToMongoDBDocument = headquarters => {
+  const mappedHeadquarters = headquarters.data.map(headquarter => {
+    const mappedHeadquarter = {
+        _id: new ObjectId(),
+        name: headquarter.name,
+    }
+    return mappedHeadquarter
+  })
+
+  return mappedHeadquarters
+}
+const mapEventsToMongoDBDocument = (events, mappedheadquarters) => {
+  const mappedEvents = events.data.map(event => {
+    const mappedEvent = {
+      address: event.address,
+      eventDate: event.eventDate,
+      name: event.name,
+      status: event.status,
+      year: event.year,
+    }
+    if (event.headquarter && typeof event.headquarter === 'object') {
+      const headquartersData = mappedheadquarters.find(
+        headquarter => headquarter.name === event.headquarter.name
+      )
+      mappedEvent.headquarter = headquartersData ? headquartersData._id : undefined;
+    }
+
+    return mappedEvent
+  })
+
+  return mappedEvents
+}
 
 // Function to save data to MongoDB
 
