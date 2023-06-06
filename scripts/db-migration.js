@@ -22,17 +22,18 @@ launch()
 const mapHeadquartersToMongoDBDocument = headquarters => {
   const mappedHeadquarters = headquarters.data.map(headquarter => {
     const mappedHeadquarter = {
-        _id: new ObjectId(),
+        _id: new ObjectId((headquarter.id).toHexString),
         name: headquarter.name,
     }
     return mappedHeadquarter
   })
-
+  
   return mappedHeadquarters
 }
 const mapEventsToMongoDBDocument = (events, mappedheadquarters) => {
   const mappedEvents = events.data.map(event => {
     const mappedEvent = {
+      _id: new ObjectId((event.id).toHexString),
       address: event.address,
       eventDate: event.eventDate,
       name: event.name,
