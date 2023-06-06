@@ -7,6 +7,7 @@ const environment = require('../environment')
 
 const allEnvironVars = environment.getEnvironmentVariables()
 
+
 const launch = async () => {
   const headquartersService = await serviceContainer('headquarters')
   const eventsService = await serviceContainer('events')
@@ -19,6 +20,11 @@ const launch = async () => {
 
   const mappedHeadquarters = mapHeadquartersToMongoDBDocument(headquarters)
   const mappedEvents = mapEventsToMongoDBDocument(events, mappedHeadquarters)
+
+  await saveToMongoDB(mappedHeadquarters, allEnvironVars.HEADQUARTERS_COLLECTION)
+  await saveToMongoDB(mappedEvents, allEnvironVars.EVENTS_COLLECTION)
+  
+  console.log('Migration process finished')
 }
 
 launch()
@@ -60,8 +66,7 @@ const mapEventsToMongoDBDocument = (events, mappedheadquarters) => {
   return mappedEvents
 }
 
-// TODO:
-// Function to save data to MongoDB
+
 const saveToMongoDB = async (data, collectionName) => {
     try {
     const MongoClient = await setupMongoDB()
@@ -78,12 +83,3 @@ const saveToMongoDB = async (data, collectionName) => {
     throw new Error('Error saving data to MongoDB')
   }
 }
-
-// Main function to perform the data migration
-//// Fetch data from Firebase
-//// Map Firebase data to MongoDB document structure
-//// Save the data to MongoDB
-//// Close Firebase connection
-//// Close MongoDB connection
-
-// Run the data migration
