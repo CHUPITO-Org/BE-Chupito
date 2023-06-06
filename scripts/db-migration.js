@@ -3,8 +3,20 @@ const { ObjectId } = require('mongodb');
 const setupMongoDB = require('../providers/mongo-client')
 const serviceContainer = require('../services/service.container')
 
-//TODO:
 // Function to fetch data from Firebase
+
+const launch = async () => {
+  const headquartersService = await serviceContainer('headquarters')
+  const eventsService = await serviceContainer('events')
+
+  const headquiarer = await headquartersService.doList()
+
+  const eventParameters = {}
+
+  const events = await eventsService.doList(eventParameters)
+}
+
+launch()
 
 // Functions to map Firebase Events and headquarters data to MongoDB document structure
 const mapHeadquartersToMongoDBDocument = headquarters => {
