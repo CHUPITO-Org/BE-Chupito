@@ -57,7 +57,7 @@ const mapEventsToMongoDBDocument = (events, mappedheadquarters) => {
       _id: new ObjectId(event.id.toHexString),
       address: event.address,
       eventDate: event.eventDate,
-      name: event.name + ' 00',
+      name: event.name,
       status: event.status,
       year: event.year,
     }
