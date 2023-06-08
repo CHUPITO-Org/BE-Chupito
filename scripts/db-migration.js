@@ -96,17 +96,13 @@ const saveToMongoDB = async (data, collectionName) => {
 }
 
 const verifyDataMigration = (mongoCollectionData, firebaseCollectionData) => {
-  let hasMatch = false
-
-  if (mongoCollectionData.length === firebaseCollectionData.length) {
-    for (let i = 0; i < mongoCollectionData.length; i++) {
-      if (mongoCollectionData[i].name !== firebaseCollectionData[i].name) {
-        console.error('Collection data mismatch between MongoDB and Firebase')
-        return hasMatch
-      }
-    }
-    return (hasMatch = true)
+  const hasMatch =
+    mongoCollectionData.length === firebaseCollectionData.length &&
+    firebaseCollectionData.every(firebaseItem =>
+      mongoCollectionData.some(mongoDBItem => mongoDBItem.name === firebaseItem.name)
+    )
+  if (!hasMatch) {
+    console.error('Collection data mismatch between MongoDB and Firebase')
   }
-  console.error('Number of Collection elements in MongoDB and Firebase does not match')
   return hasMatch
 }
