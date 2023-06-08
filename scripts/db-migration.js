@@ -1,6 +1,5 @@
-const { ObjectId } = require('mongodb')
+const { ObjectId, MongoClient } = require('mongodb')
 
-const setupMongoDB = require('../providers/mongo-client')
 const serviceContainer = require('../services/service.container')
 const environment = require('../environment')
 
@@ -75,15 +74,24 @@ const mapEventsToMongoDBDocument = (events, mappedheadquarters) => {
 }
 
 const saveToMongoDB = async (data, collectionName) => {
+  const { MONGODB_URI, DEFAULT_DB } = allEnvironVars
+  const options = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }
+
   try {
-    const mongoClient = await setupMongoDB()
-    const db = mongoClient.db(allEnvironVars.DEFAULT_DB)
+    const mongoClient = new MongoClient(MONGODB_URI, options)
+    await mongoClient.connect()
+
+    const db = mongoClient.db(DEFAULT_DB)
     const collection = db.collection(collectionName)
 
     await db.createCollection(collectionName)
     await collection.insertMany(data)
 
     const savedCollection = await collection.find({}).toArray()
+
     await mongoClient.close()
 
     console.log(collectionName + 'Data saved to MongoDB successfully')
