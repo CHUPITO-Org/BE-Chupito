@@ -7,7 +7,9 @@ const BaseService = require('./base.service')
 class EventServiceDB extends BaseService {
   constructor(dbInstance) {
     super()
-    this.db = dbInstance.db('events')
+    //this.db = dbInstance.db('mongodb')
+    this.collection = dbInstance.collection('events')
+    //this.model = Event
     this.eventCreatedStatus = 'created'
   }
 
@@ -30,9 +32,10 @@ class EventServiceDB extends BaseService {
   }
 
   async findAll() {
-    console.log('Service')
     try {
-      return await this.db.insertOne()
+      const data = await this.collection.find({}).toArray()
+      console.log('data: ', data)
+      return this.getSuccessResponse(data, '')
     } catch (error) {
       return error
     }
