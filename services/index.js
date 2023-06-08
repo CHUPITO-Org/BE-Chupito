@@ -4,6 +4,7 @@ const setupServiceProviders = require('./../providers')
 
 const UserService = require('./user.service')
 const setupAttendeesService = require('./attendees.service')
+const EventServiceDB = require('./eventDB.service')
 const EventsService = require('./events.service')
 const AuthenticationService = require('./authentication.service')
 const setupRolesService = require('./roles.service')
@@ -30,6 +31,8 @@ module.exports = async () => {
     serviceProviders.dbInstance
   )
 
+  const eventServiceDB = new EventServiceDB(serviceProviders.clientMongo)
+
   return {
     authCodesService,
     authenticationService,
@@ -41,5 +44,6 @@ module.exports = async () => {
     storageService,
     userService,
     sessionService,
+    eventServiceDB,
   }
 }
