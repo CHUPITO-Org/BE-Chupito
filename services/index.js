@@ -4,7 +4,6 @@ const setupServiceProviders = require('./../providers')
 
 const UserService = require('./user.service')
 const setupAttendeesService = require('./attendees.service')
-const EventServiceDB = require('./eventDB.service')
 const EventsService = require('./events.service')
 const AuthenticationService = require('./authentication.service')
 const setupRolesService = require('./roles.service')
@@ -15,12 +14,18 @@ const setupSessionService = require('./session.service')
 const setupAuthCodeService = require('./auth.codes.service')
 
 module.exports = async () => {
+  let db = null
   const serviceProviders = await setupServiceProviders()
 
   const authenticationService = new AuthenticationService(serviceProviders.adminAuth)
   const userService = new UserService(serviceProviders.dbInstance)
   const attendeesService = setupAttendeesService(serviceProviders.dbInstance)
-  const eventsService = new EventsService(serviceProviders.dbInstance)
+  console.log(process.env.DB === 'mongodb')
+  console.log(process.env.DB)
+  process.env.DB === 'mongodb'
+    ? (db = serviceProviders.clientMongo)
+    : (db = serviceProviders.dbInstance)
+  const eventsService = new EventsService(db)
   const rolesService = setupRolesService(serviceProviders.dbInstance)
   const headquartersService = new HeadquartersService(serviceProviders.dbInstance)
   const storageService = setupStorageService(serviceProviders.bucket)
@@ -30,8 +35,6 @@ module.exports = async () => {
     serviceProviders.adminAuth,
     serviceProviders.dbInstance
   )
-
-  const eventServiceDB = new EventServiceDB(serviceProviders.clientMongo)
 
   return {
     authCodesService,
@@ -44,6 +47,5 @@ module.exports = async () => {
     storageService,
     userService,
     sessionService,
-    eventServiceDB,
   }
 }

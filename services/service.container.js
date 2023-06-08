@@ -6,8 +6,7 @@ module.exports = async function getContainer(service) {
   const dbService = await setupDBService()
 
   if (service === 'events') {
-    //return dbService.eventsService
-    return dbService.eventServiceDB
+    return dbService.eventsService
   }
 
   if (service === 'authentication') {

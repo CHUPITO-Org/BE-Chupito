@@ -4,17 +4,11 @@ const express = require('express')
 const eventsController = require('./events.controller')
 const eventController = require('./event.controller')
 
-//---------------------------//
-
-const eventDBController = require('./eventDB.controller')
-
-//---------------------------//
-
 const router = express.Router()
 
-//router.get('/', eventsController.get)
+router.get('/', eventsController.get)
 // router.post('/', eventDBController.post)
-router.get('/', eventDBController.get)
+//router.get('/', eventDBController.get)
 
 router.get('/:id', eventController.get)
 router.post('/', eventController.post)

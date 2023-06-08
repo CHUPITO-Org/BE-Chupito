@@ -12,8 +12,6 @@ module.exports = async () => {
 
   const clientMongo = await setupMongoDB()
 
-  if (process.env.DB === 'mongodb') {
-  }
   return {
     adminAuth,
     dbInstance,
