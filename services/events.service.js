@@ -22,7 +22,7 @@ class EventsService extends BaseService {
     try {
       data.status = this.eventCreatedStatus
       data.year = new Date(data.date).getFullYear()
-      
+
       let newEventRef
       ACTIVE_DB === DEFAULT_DB
         ? (newEventRef = await this.insertInMongo(data))
@@ -55,8 +55,6 @@ class EventsService extends BaseService {
         ? (dataSnapshot = await this.doListFromMongo(eventParams))
         : (dataSnapshot = await this.doListFromFirebase(eventParams))
 
-      console.log('dataSnapshot')
-      console.log(dataSnapshot)
       response = this.getSuccessResponse(dataSnapshot, 'Getting all events successfully')
     } catch (err) {
       console.log(err)
