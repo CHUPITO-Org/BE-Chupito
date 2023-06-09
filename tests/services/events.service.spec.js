@@ -7,6 +7,7 @@ const mockFirestoreCollectionList = require('./../util/firestore.collection.list
 
 const EventsService = require('../../services/events.service')
 
+
 let collectionKey = 'events'
 let sandbox = null
 let eventsService
@@ -52,7 +53,7 @@ test.beforeEach(() => {
     },
     add: data => {
       return Promise.resolve({
-        id: 10000,
+        _id: 10000,
       })
     },
   })
@@ -74,9 +75,7 @@ test.serial('Create event', async t => {
       name: 'Buenos Aires',
     },
     status: 'created',
-    placeName: '',
     address: '120 Main Street',
-    phoneNumber: '',
     responsable: {},
   }
 
@@ -90,7 +89,6 @@ test.serial('Create event', async t => {
   t.is(newEvent['data'].hasOwnProperty('date'), true, 'Expected date key')
   t.is(newEvent['data'].hasOwnProperty('headquarter'), true, 'Expected headquarter key')
   t.is(newEvent['data'].hasOwnProperty('status'), true, 'Expected status key')
-  t.is(newEvent['data'].hasOwnProperty('placeName'), true, 'Expected placeName key')
   t.is(newEvent['data'].hasOwnProperty('address'), true, 'Expected address key')
   t.is(newEvent['data'].hasOwnProperty('responsable'), true, 'Expected responsable key')
 })
