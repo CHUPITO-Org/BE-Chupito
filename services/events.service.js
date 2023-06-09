@@ -2,6 +2,9 @@
 
 const { ObjectId } = require('mongodb')
 const BaseService = require('./base.service')
+const environment = require('../environment')
+
+const { ACTIVE_DB, DEFAULT_DB } = environment.getEnvironmentVariables()
 
 class EventsService extends BaseService {
   constructor(dbInstance) {
@@ -13,15 +16,20 @@ class EventsService extends BaseService {
   }
 
   async create(data) {
-    let newEvent = null
+    let newEvent = data
     let response
 
     try {
       data.status = this.eventCreatedStatus
-      newEvent = data
-      newEvent.year = new Date(data.date).getFullYear()
-      let newEventRef = await this.collection.add(data)
-      newEvent.id = newEventRef.id
+      data.year = new Date(data.date).getFullYear()
+      let newEventRef
+      console.log(ACTIVE_DB, DEFAULT_DB)
+      ACTIVE_DB === DEFAULT_DB
+        ? (newEventRef = await this.insertInMongo(data))
+        : (newEventRef = await this.addToFirebase(data))
+
+      newEvent.id = newEventRef.id || newEventRef._id
+
       // TODO: Create a constants object and replace this message
       const successMessage = 'Event was successfully created.'
       response = this.getSuccessResponse(newEvent, successMessage)
@@ -372,6 +380,16 @@ class EventsService extends BaseService {
     } catch (error) {
       return error
     }
+  }
+  async insertInMongo(data) {
+    let newEvent = await this.collection.insertOne(data)
+    console.log('1',newEvent)
+    return newEvent
+  }
+  async addToFirebase(data) {
+    let newEvent = await this.collection.add(data)
+    console.log('2', newEvent)
+    return newEvent
   }
 }
 
