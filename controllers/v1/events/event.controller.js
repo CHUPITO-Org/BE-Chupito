@@ -2,7 +2,9 @@
 
 const BaseController = require('../base.controller')
 const serviceContainer = require('../../../services/service.container')
+const environment = require('../../../environment')
 
+const { ACTIVE_DB, DEFAULT_DB } = environment.getEnvironmentVariables()
 let baseController = new BaseController()
 
 const get = async (request, response) => {
@@ -45,19 +47,10 @@ const post = async (request, response) => {
   ) {
     return response.status(400).json(baseController.getErrorResponse('Parameters are missing'))
   }
-
-  eventData = {
-    name: request.body.name,
-    date: request.body.date,
-    headquarter: request.body.headquarter,
-    responsable: request.body.responsable,
-    images: [],
-  }
-
-  eventData['address'] = request.body.address ? request.body.address : ''
-  eventData['placeName'] = request.body.placeName ? request.body.placeName : ''
-
-  eventData['phoneNumber'] = request.body.phoneNumber ? request.body.phoneNumber : ''
+  const newEvent = request.body
+  ACTIVE_DB === DEFAULT_DB
+  ? (eventData = mongoEventData(newEvent))
+  : (eventData = firebaseEventData(newEvent))
 
   try {
     const eventResponse = await eventsService.create(eventData)
@@ -325,6 +318,32 @@ const remove = async (request, response) => {
   }
 
   return response.status(responseCode).json(responseData)
+}
+
+const mongoEventData = (newEvent) => {
+  let eventData = {
+    name: newEvent.name,
+    date: newEvent.date,
+    headquarter: newEvent.headquarter,
+  }
+  eventData['address'] = newEvent.address ? newEvent.address : ''
+  return eventData
+}
+
+const firebaseEventData = (newEvent) => {
+  let eventData = {
+    name: newEvent.name,
+    date: newEvent.date,
+    headquarter: newEvent.headquarter,
+    responsable: newEvent.responsable,
+    images: [],
+  }
+  
+  eventData['address'] = newEvent.address ? newEvent.address : ''
+  eventData['placeName'] = newEvent.placeName ? newEvent.placeName : ''
+  
+  eventData['phoneNumber'] = newEvent.phoneNumber ? newEvent.phoneNumber : ''
+  return eventData
 }
 
 module.exports = {

@@ -22,8 +22,8 @@ class EventsService extends BaseService {
     try {
       data.status = this.eventCreatedStatus
       data.year = new Date(data.date).getFullYear()
+      
       let newEventRef
-      console.log(ACTIVE_DB, DEFAULT_DB)
       ACTIVE_DB === DEFAULT_DB
         ? (newEventRef = await this.insertInMongo(data))
         : (newEventRef = await this.addToFirebase(data))
@@ -383,12 +383,10 @@ class EventsService extends BaseService {
   }
   async insertInMongo(data) {
     let newEvent = await this.collection.insertOne(data)
-    console.log('1',newEvent)
     return newEvent
   }
   async addToFirebase(data) {
     let newEvent = await this.collection.add(data)
-    console.log('2', newEvent)
     return newEvent
   }
 }
