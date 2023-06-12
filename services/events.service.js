@@ -36,26 +36,24 @@ class EventsService extends BaseService {
     return response
   }
 
-  //async doList(eventParams) {
   async doList(eventParams) {
-    let response
+    console.log('EVENTSPARAMS')
+    console.log(eventParams)
 
-    let dataSnapshot
+    //console.log('INSTANCIAS', this.collection instanceof serviceProviders.clientMongo)
 
     try {
-      process.env.DB === 'mongodb'
-        ? (dataSnapshot = await this.doListFromMongo(eventParams))
-        : (dataSnapshot = await this.doListFromFirebase(eventParams))
+      const dataSnapshot =
+        process.env.DB === 'mongodb'
+          ? await this.doListFromMongo(eventParams)
+          : await this.doListFromFirebase(eventParams)
 
-      console.log('dataSnapshot')
-      console.log(dataSnapshot)
-      response = this.getSuccessResponse(dataSnapshot, 'Getting all events successfully')
+      console.log('PROCESS', process.env.DB)
+      console.log({ dataSnapshot })
+      return this.getSuccessResponse(dataSnapshot, 'Getting all events successfully')
     } catch (err) {
-      console.log(err)
-      response = this.getErrorResponse('Error getting all events')
+      return this.getErrorResponse('Error getting all events')
     }
-
-    return response
   }
 
   async getEventData(id) {
@@ -318,8 +316,8 @@ class EventsService extends BaseService {
   }
 
   async doListFromFirebase(eventParams) {
+    console.log('ENTRA AL FIREBASE')
     let allEvents = []
-
     const { year, withAttendees, headquarterId, showAllStatus } = eventParams
 
     try {
@@ -332,6 +330,7 @@ class EventsService extends BaseService {
       if (headquarterId) {
         rootQuery = rootQuery.where('headquarter.id', '==', headquarterId)
       }
+
       const dataSnapshot = await rootQuery.get()
 
       dataSnapshot.forEach(doc => {
@@ -354,6 +353,7 @@ class EventsService extends BaseService {
   }
 
   async doListFromMongo(eventParams) {
+    console.log('ENTRA AL MONGO')
     try {
       let queryEvents = {}
 
@@ -368,6 +368,7 @@ class EventsService extends BaseService {
       }
 
       const data = await this.collection.find(queryEvents).toArray()
+
       return data
     } catch (error) {
       return error

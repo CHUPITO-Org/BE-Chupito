@@ -13,7 +13,9 @@ const get = async (request, response) => {
   let responseData
 
   // TODO: Move all validations for a specific function
-  eventParameters.year = !request.query.year ? new Date().getFullYear() : request.query.year
+  //eventParameters.year = !request.query.year ? new Date().getFullYear() : request.query.year
+
+  eventParameters.year = !request.query.year ? null : request.query.year
 
   eventParameters.headquarterId = !request.query.headquarterId ? null : request.query.headquarterId
 
@@ -24,10 +26,8 @@ const get = async (request, response) => {
     : request.query.withAttendees === 'true'
 
   try {
-    console.log('ENTRA AL CONTROLLER')
     const events = await eventsService.doList(eventParameters)
-    //const events = await eventsService.doList()
-    console.log(events)
+
     responseCode = events.responseCode
     responseData = baseController.getSuccessResponse(events.data, events.message)
   } catch (error) {

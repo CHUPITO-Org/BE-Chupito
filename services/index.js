@@ -20,12 +20,10 @@ module.exports = async () => {
   const authenticationService = new AuthenticationService(serviceProviders.adminAuth)
   const userService = new UserService(serviceProviders.dbInstance)
   const attendeesService = setupAttendeesService(serviceProviders.dbInstance)
-  console.log(process.env.DB === 'mongodb')
-  console.log(process.env.DB)
-  process.env.DB === 'mongodb'
-    ? (db = serviceProviders.clientMongo)
-    : (db = serviceProviders.dbInstance)
-  const eventsService = new EventsService(db)
+  // process.env.DB === 'mongodb'
+  //   ? (db = serviceProviders.clientMongo)
+  //   : (db = serviceProviders.dbInstance)
+  const eventsService = new EventsService(serviceProviders.clientMongo)
   const rolesService = setupRolesService(serviceProviders.dbInstance)
   const headquartersService = new HeadquartersService(serviceProviders.dbInstance)
   const storageService = setupStorageService(serviceProviders.bucket)
