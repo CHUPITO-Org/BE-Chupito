@@ -1,5 +1,6 @@
 'use strict'
 
+const { ObjectId, Db } = require('mongodb')
 const BaseService = require('./base.service')
 
 class EventsService extends BaseService {
@@ -36,49 +37,16 @@ class EventsService extends BaseService {
   }
 
   async doList(eventParams) {
-    let allEvents = []
-    let response
-
-    const { year, withAttendees, headquarterId, showAllStatus } = eventParams
-
     try {
-      let rootQuery = this.collection
+      const dataSnapshot =
+        process.env.DB === 'mongodb'
+          ? await this.doListFromMongo(eventParams)
+          : await this.doListFromFirebase(eventParams)
 
-      if (year) {
-        rootQuery.where('year', '==', parseInt(year, 10))
-      }
-
-      if (headquarterId) {
-        rootQuery = rootQuery.where('headquarter.id', '==', headquarterId)
-      }
-
-      const dataSnapshot = await rootQuery.get()
-
-      dataSnapshot.forEach(doc => {
-        const event = {
-          id: doc.id,
-          ...doc.data(),
-        }
-
-        if (showAllStatus || event.status !== 'closed') {
-          if ((event.attendees && event.attendees.length > 0) || !withAttendees) {
-            allEvents.push(event)
-          }
-        }
-      })
-
-      // TODO: Create a constants object and replace this message
-      const successMessage = 'Getting all events successfully'
-      response = this.getSuccessResponse(allEvents, successMessage)
+      return this.getSuccessResponse(dataSnapshot, 'Getting all events successfully')
     } catch (err) {
-      const errorMessage = 'Error getting all events'
-      /* eslint-disable no-console */
-      // console.error(errorMessage, err)
-      /* eslint-enable */
-      response = this.getErrorResponse(errorMessage)
+      return this.getErrorResponse('Error getting all events')
     }
-
-    return response
   }
 
   async getEventData(id) {
@@ -338,6 +306,61 @@ class EventsService extends BaseService {
     }
 
     return response
+  }
+
+  async doListFromFirebase(eventParams) {
+    let allEvents = []
+    const { year, withAttendees, headquarterId, showAllStatus } = eventParams
+
+    let rootQuery = this.collection
+    try {
+      if (year) {
+        rootQuery = rootQuery.where('year', '==', parseInt(year, 10))
+      }
+
+      if (headquarterId) {
+        rootQuery = rootQuery.where('headquarter.id', '==', headquarterId)
+      }
+
+      const dataSnapshot = await rootQuery.get()
+
+      dataSnapshot.forEach(doc => {
+        const event = {
+          id: doc.id,
+          ...doc.data(),
+        }
+
+        if (showAllStatus || event.status !== 'closed') {
+          if ((event.attendees && event.attendees.length > 0) || !withAttendees) {
+            allEvents.push(event)
+          }
+        }
+      })
+
+      return allEvents
+    } catch (err) {
+      return this.getErrorResponse('Error getting all events')
+    }
+  }
+
+  async doListFromMongo(eventParams) {
+    try {
+      let queryEvents = {}
+
+      const { year, withAttendees, headquarterId, showAllStatus } = eventParams
+
+      if (year) {
+        queryEvents['year'] = parseInt(year, 10)
+      }
+
+      if (headquarterId) {
+        queryEvents['headquarter'] = new ObjectId(headquarterId)
+      }
+
+      return await this.collection.find(queryEvents).toArray()
+    } catch (error) {
+      return error
+    }
   }
 }
 

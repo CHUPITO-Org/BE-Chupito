@@ -1,5 +1,7 @@
 'use strict'
 
+require('dotenv').config({ path: '.env.test' })
+
 const test = require('ava')
 const sinon = require('sinon')
 
@@ -81,7 +83,6 @@ test.serial('Create event', async t => {
   }
 
   let newEvent = await eventsService.create(data)
-
   t.is(newEvent.hasOwnProperty('message'), true, 'Expected message key')
   t.is(newEvent.hasOwnProperty('data'), true, 'Expected data key')
 
@@ -96,10 +97,26 @@ test.serial('Create event', async t => {
 })
 
 // TODO: Review mock data to run this test
-test.skip('Do list all events without year', async t => {
-  const error = await t.throwsAsync(() => eventsService.doList({}), { instanceOf: Error })
+test.todo('Do list all events without params', async t => {
+  //const error = await t.throwsAsync(() => eventsService.doList({}), { instanceOf: Error })
 
-  t.is(error.message, 'Missing parameter')
+  let eventsData = await eventsService.doList({})
+
+  t.is(eventsData.hasOwnProperty('message'), true, 'Expected message key')
+  t.is(eventsData.hasOwnProperty('data'), true, 'Expected data key')
+  //t.is(eventsData['data'].length, 2, 'Expected 2 elements')
+
+  eventsData['data'].forEach(eventData => {
+    t.is(eventData.hasOwnProperty('id'), true, 'Expected id key')
+    t.is(eventData.hasOwnProperty('name'), true, 'Expected name key')
+    t.is(eventData.hasOwnProperty('date'), true, 'Expected date key')
+    t.is(eventData.hasOwnProperty('headquarter'), true, 'Expected headquarter key')
+    t.is(eventData.hasOwnProperty('placeName'), true, 'Expected placeName key')
+    t.is(eventData.hasOwnProperty('address'), true, 'Expected address key')
+    t.is(eventData.hasOwnProperty('responsable'), true, 'Expected responsable key')
+    t.is(eventData.hasOwnProperty('status'), true, 'Expected status key')
+  })
+  //t.is(error.message, 'Missing parameter')
 })
 
 test.skip('Do list all events with year and headquarter', async t => {
