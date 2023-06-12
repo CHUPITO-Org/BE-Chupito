@@ -40,7 +40,6 @@
     "firebase-admin": "^11.7.0",
     "json2csv": "^5.0.1",
     "mongodb": "^5.5.0",
-    "mongoose": "^7.2.2",
     "morgan": "^1.10.0",
     "uuid": "^9.0.0",
     "xhr2": "^0.2.0"
