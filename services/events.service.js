@@ -1,6 +1,6 @@
 'use strict'
 
-const { ObjectId } = require('mongodb')
+const { ObjectId, Db } = require('mongodb')
 const BaseService = require('./base.service')
 
 class EventsService extends BaseService {
@@ -37,19 +37,12 @@ class EventsService extends BaseService {
   }
 
   async doList(eventParams) {
-    console.log('EVENTSPARAMS')
-    console.log(eventParams)
-
-    //console.log('INSTANCIAS', this.collection instanceof serviceProviders.clientMongo)
-
     try {
       const dataSnapshot =
         process.env.DB === 'mongodb'
           ? await this.doListFromMongo(eventParams)
           : await this.doListFromFirebase(eventParams)
 
-      console.log('PROCESS', process.env.DB)
-      console.log({ dataSnapshot })
       return this.getSuccessResponse(dataSnapshot, 'Getting all events successfully')
     } catch (err) {
       return this.getErrorResponse('Error getting all events')
@@ -316,15 +309,13 @@ class EventsService extends BaseService {
   }
 
   async doListFromFirebase(eventParams) {
-    console.log('ENTRA AL FIREBASE')
     let allEvents = []
     const { year, withAttendees, headquarterId, showAllStatus } = eventParams
 
+    let rootQuery = this.collection
     try {
-      let rootQuery = this.collection
-
       if (year) {
-        rootQuery.where('year', '==', parseInt(year, 10))
+        rootQuery = rootQuery.where('year', '==', parseInt(year, 10))
       }
 
       if (headquarterId) {
@@ -353,7 +344,6 @@ class EventsService extends BaseService {
   }
 
   async doListFromMongo(eventParams) {
-    console.log('ENTRA AL MONGO')
     try {
       let queryEvents = {}
 
@@ -367,9 +357,7 @@ class EventsService extends BaseService {
         queryEvents['headquarter'] = new ObjectId(headquarterId)
       }
 
-      const data = await this.collection.find(queryEvents).toArray()
-
-      return data
+      return await this.collection.find(queryEvents).toArray()
     } catch (error) {
       return error
     }
