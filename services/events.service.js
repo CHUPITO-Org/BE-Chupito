@@ -323,7 +323,7 @@ class EventsService extends BaseService {
       }
 
       const dataSnapshot = await rootQuery.get()
-
+      console.log(dataSnapshot.docs)
       dataSnapshot.forEach(doc => {
         const event = {
           id: doc.id,
@@ -337,6 +337,7 @@ class EventsService extends BaseService {
         }
       })
 
+      //console.log(allEvents)
       return allEvents
     } catch (err) {
       return this.getErrorResponse('Error getting all events')
@@ -344,8 +345,9 @@ class EventsService extends BaseService {
   }
 
   async doListFromMongo(eventParams) {
+    const events = []
     try {
-      let queryEvents = {}
+      const queryEvents = {}
 
       const { year, withAttendees, headquarterId, showAllStatus } = eventParams
 
@@ -357,7 +359,11 @@ class EventsService extends BaseService {
         queryEvents['headquarter'] = new ObjectId(headquarterId)
       }
 
-      return await this.collection.find(queryEvents).toArray()
+      const data = await this.collection.find(queryEvents)
+      for await (const aux of data) {
+        events.push(aux)
+      }
+      return events
     } catch (error) {
       return error
     }

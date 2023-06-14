@@ -1,10 +1,9 @@
-'use strict';
+'use strict'
 
-const MockHeadquarter = require('./headquarter');
+const MockHeadquarter = require('./headquarter')
 
 class MockEvent {
-  constructor() {
-  }
+  constructor() {}
 
   static generate(eventData) {
     let event = {
@@ -15,28 +14,31 @@ class MockEvent {
       images: [],
       responsable: {
         id: 'tlbhNksEGawqAOLKWUEL',
-        name: 'Juan Perez'
+        name: 'Juan Perez',
       },
       phoneNumber: '9999999999',
       placeName: '',
       status: eventData.status || 'created',
-      year: 2019
-    };
-
-    if (eventData.id) {
-      event.id = eventData.id;
+      year: 2019,
     }
 
-    return event;
+    if (eventData.id) {
+      event.id = eventData.id
+    }
+
+    console.log('EVENT', event)
+    return event
   }
 
   generateList(eventsData) {
-    const events = [];
+    const events = []
+
     for (let i = 0; i < eventsData.length; i++) {
-      events.push(this.generate(eventsData[i]));
+      events.push(this.generate(eventsData[i]))
     }
-    return events;
+
+    return events
   }
 }
 
-module.exports = MockEvent;
+module.exports = MockEvent
