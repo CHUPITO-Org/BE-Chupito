@@ -1,9 +1,10 @@
 'use strict'
 
-require('dotenv').config({ path: '.env.test' })
+// require('dotenv').config({ path: '.env.test' })
 
 const test = require('ava')
 const sinon = require('sinon')
+const proxyquire = require('proxyquire')
 const { ObjectId } = require('mongodb')
 
 const mockMongoDBCollectionList = require('./../util/mongodb.collection.list')
@@ -14,13 +15,21 @@ let collectionName = 'events'
 let sandbox = null
 let eventsService
 let dbInstanceStub = null
+let mockFind
+
+proxyquire('../../environment', () => ({
+  getEnvironmentVariables: () => ({
+    APP_DB: 'mongodb',
+  }),
+}))
 
 test.beforeEach(() => {
   sandbox = sinon.createSandbox()
+  mockFind = sinon.stub()
 
   dbInstanceStub = {
     collection: sandbox.stub().returns({
-      find: sandbox.stub().resolves(mockMongoDBCollectionList.get(collectionName, 1)),
+      find: mockFind.resolves(mockMongoDBCollectionList.get(collectionName, 2)),
       findOne: sandbox.stub().resolves({
         id: new ObjectId(),
         name: 'Juan Perez',
@@ -75,27 +84,21 @@ test.skip('Create event', async t => {
   t.is(newEvent['data'].hasOwnProperty('responsable'), true, 'Expected responsable key')
 })
 
-// TODO: Review mock data to run this test
 test.serial('Do list all events without params', async t => {
   let eventsData = await eventsService.doList({})
-
-  console.log('DATA', eventsData)
-  // for (const aux of eventsData) {
-  //   console.log(aux)
-  // }
 
   t.is(eventsData.hasOwnProperty('message'), true, 'Expected message key')
   t.is(eventsData.hasOwnProperty('data'), true, 'Expected data key')
 
   eventsData['data'].forEach(eventData => {
     t.is(eventData.hasOwnProperty('id'), true, 'Expected id key')
-    t.is(eventData.hasOwnProperty('name'), true, 'Expected name key')
-    t.is(eventData.hasOwnProperty('date'), true, 'Expected date key')
-    t.is(eventData.hasOwnProperty('headquarter'), true, 'Expected headquarter key')
-    t.is(eventData.hasOwnProperty('placeName'), true, 'Expected placeName key')
-    t.is(eventData.hasOwnProperty('address'), true, 'Expected address key')
-    t.is(eventData.hasOwnProperty('responsable'), true, 'Expected responsable key')
-    t.is(eventData.hasOwnProperty('status'), true, 'Expected status key')
+    t.is(eventData.data.hasOwnProperty('name'), true, 'Expected name key')
+    t.is(eventData.data.hasOwnProperty('date'), true, 'Expected date key')
+    t.is(eventData.data.hasOwnProperty('headquarter'), true, 'Expected headquarter key')
+    t.is(eventData.data.hasOwnProperty('placeName'), true, 'Expected placeName key')
+    t.is(eventData.data.hasOwnProperty('address'), true, 'Expected address key')
+    t.is(eventData.data.hasOwnProperty('responsable'), true, 'Expected responsable key')
+    t.is(eventData.data.hasOwnProperty('status'), true, 'Expected status key')
   })
 })
 

@@ -1,7 +1,9 @@
 'use strict'
 
 const { ObjectId, Db } = require('mongodb')
+
 const BaseService = require('./base.service')
+const environmentVars = require('../environment')
 
 class EventsService extends BaseService {
   constructor(dbInstance) {
@@ -37,9 +39,11 @@ class EventsService extends BaseService {
   }
 
   async doList(eventParams) {
+    const { APP_DB, DEFAULT_DB } = environmentVars.getEnvironmentVariables()
+
     try {
       const dataSnapshot =
-        process.env.DB === 'mongodb'
+        APP_DB === DEFAULT_DB
           ? await this.doListFromMongo(eventParams)
           : await this.doListFromFirebase(eventParams)
 
@@ -323,7 +327,7 @@ class EventsService extends BaseService {
       }
 
       const dataSnapshot = await rootQuery.get()
-      console.log(dataSnapshot.docs)
+
       dataSnapshot.forEach(doc => {
         const event = {
           id: doc.id,
@@ -337,7 +341,6 @@ class EventsService extends BaseService {
         }
       })
 
-      //console.log(allEvents)
       return allEvents
     } catch (err) {
       return this.getErrorResponse('Error getting all events')
@@ -346,10 +349,11 @@ class EventsService extends BaseService {
 
   async doListFromMongo(eventParams) {
     const events = []
+
     try {
       const queryEvents = {}
 
-      const { year, withAttendees, headquarterId, showAllStatus } = eventParams
+      const { year, headquarterId } = eventParams
 
       if (year) {
         queryEvents['year'] = parseInt(year, 10)
@@ -360,9 +364,12 @@ class EventsService extends BaseService {
       }
 
       const data = await this.collection.find(queryEvents)
-      for await (const aux of data) {
-        events.push(aux)
+
+      for await (const doc of data) {
+        events.push(doc)
       }
+
+      // TODO: colocar estructura
       return events
     } catch (error) {
       return error

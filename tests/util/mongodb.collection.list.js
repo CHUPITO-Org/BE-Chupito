@@ -9,15 +9,14 @@ class MockMongoCollectionList {
   constructor() {}
 
   static get(mockFixtureData, numberOfElements) {
-    const fixtureData = FixtureService.getFixture(mockFixtureData)
-    console.log('FIXTUREDATA', fixtureData.generate)
+    const fixtureClass = FixtureService.getFixture(mockFixtureData)
+
     const allData = []
 
     for (let i = 0; i < numberOfElements; i++) {
       const uid = uuidGenerator()
-      allData.push(MockMongoCollectionListElement.getElement(uid, fixtureData.generate))
+      allData.push(MockMongoCollectionListElement.getElement(uid, fixtureClass.generate({})))
     }
-
     return Promise.resolve(allData)
   }
 }

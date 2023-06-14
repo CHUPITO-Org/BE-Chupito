@@ -5,7 +5,7 @@ const MockHeadquarter = require('./headquarter')
 class MockEvent {
   constructor() {}
 
-  static generate(eventData) {
+  generate(eventData) {
     let event = {
       name: eventData.name || 'Event Name',
       address: '120 Main street',
@@ -25,8 +25,6 @@ class MockEvent {
     if (eventData.id) {
       event.id = eventData.id
     }
-
-    console.log('EVENT', event)
     return event
   }
 
