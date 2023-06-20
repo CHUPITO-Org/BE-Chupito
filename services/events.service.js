@@ -1,7 +1,9 @@
 'use strict'
 
 const { ObjectId, Db } = require('mongodb')
+
 const BaseService = require('./base.service')
+const environmentVars = require('../environment')
 
 class EventsService extends BaseService {
   constructor(dbInstance) {
@@ -37,9 +39,11 @@ class EventsService extends BaseService {
   }
 
   async doList(eventParams) {
+    const { APP_DB, DEFAULT_DB } = environmentVars.getEnvironmentVariables()
+
     try {
       const dataSnapshot =
-        process.env.DB === 'mongodb'
+        APP_DB === DEFAULT_DB
           ? await this.doListFromMongo(eventParams)
           : await this.doListFromFirebase(eventParams)
 
@@ -345,9 +349,10 @@ class EventsService extends BaseService {
 
   async doListFromMongo(eventParams) {
     try {
-      let queryEvents = {}
+      const events = []
+      const queryEvents = {}
 
-      const { year, withAttendees, headquarterId, showAllStatus } = eventParams
+      const { year, headquarterId } = eventParams
 
       if (year) {
         queryEvents['year'] = parseInt(year, 10)
@@ -357,7 +362,9 @@ class EventsService extends BaseService {
         queryEvents['headquarter'] = new ObjectId(headquarterId)
       }
 
-      return await this.collection.find(queryEvents).toArray()
+      const data = await this.collection.find(queryEvents).toArray()
+      // TODO: colocar estructura
+      return data
     } catch (error) {
       return error
     }
