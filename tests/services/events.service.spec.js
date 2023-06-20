@@ -29,7 +29,9 @@ test.beforeEach(() => {
 
   dbInstanceStub = {
     collection: sandbox.stub().returns({
-      find: mockFind.resolves(mockMongoDBCollectionList.get(collectionName, 2)),
+      find: sandbox.stub().returns({
+        toArray: sandbox.stub().returns(mockMongoDBCollectionList.get(collectionName, 2)),
+      }),
       findOne: sandbox.stub().resolves({
         id: new ObjectId(),
         name: 'Juan Perez',
@@ -87,6 +89,7 @@ test.skip('Create event', async t => {
 test.serial('Do list all events without params', async t => {
   let eventsData = await eventsService.doList({})
 
+  console.log('EVENTSDATA', eventsData)
   t.is(eventsData.hasOwnProperty('message'), true, 'Expected message key')
   t.is(eventsData.hasOwnProperty('data'), true, 'Expected data key')
 

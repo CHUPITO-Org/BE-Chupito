@@ -11,13 +11,15 @@ class MockMongoCollectionList {
   static get(mockFixtureData, numberOfElements) {
     const fixtureClass = FixtureService.getFixture(mockFixtureData)
 
-    const allData = []
+    return Promise.resolve(
+      Array.from({ length: numberOfElements }).map(() =>
+        MockMongoCollectionListElement.getElement(uuidGenerator(), fixtureClass.generate({}))
+      )
+    )
+  }
 
-    for (let i = 0; i < numberOfElements; i++) {
-      const uid = uuidGenerator()
-      allData.push(MockMongoCollectionListElement.getElement(uid, fixtureClass.generate({})))
-    }
-    return Promise.resolve(allData)
+  toArray(mockFixtureData, numberOfElements) {
+    const mockData = get(mockFixtureData, numberOfElements)
   }
 }
 

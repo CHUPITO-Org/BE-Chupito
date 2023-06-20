@@ -6,7 +6,7 @@ class MockEvent {
   constructor() {}
 
   generate(eventData) {
-    let event = {
+    const event = {
       name: eventData.name || 'Event Name',
       address: '120 Main street',
       date: '2019-05-12T19:00',

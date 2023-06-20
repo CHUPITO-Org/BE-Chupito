@@ -348,9 +348,8 @@ class EventsService extends BaseService {
   }
 
   async doListFromMongo(eventParams) {
-    const events = []
-
     try {
+      const events = []
       const queryEvents = {}
 
       const { year, headquarterId } = eventParams
@@ -363,14 +362,9 @@ class EventsService extends BaseService {
         queryEvents['headquarter'] = new ObjectId(headquarterId)
       }
 
-      const data = await this.collection.find(queryEvents)
-
-      for await (const doc of data) {
-        events.push(doc)
-      }
-
+      const data = await this.collection.find(queryEvents).toArray()
       // TODO: colocar estructura
-      return events
+      return data
     } catch (error) {
       return error
     }
