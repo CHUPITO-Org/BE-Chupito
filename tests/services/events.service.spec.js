@@ -89,7 +89,6 @@ test.skip('Create event', async t => {
 test.serial('Do list all events without params', async t => {
   let eventsData = await eventsService.doList({})
 
-  console.log('EVENTSDATA', eventsData)
   t.is(eventsData.hasOwnProperty('message'), true, 'Expected message key')
   t.is(eventsData.hasOwnProperty('data'), true, 'Expected data key')
 
