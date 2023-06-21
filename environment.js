@@ -1,6 +1,8 @@
 const dotenv = require('dotenv')
 
 const DEFAULT_DATABASE = 'mongodb'
+
+// TODO: These should be removed because they are NOT environment variables
 const EVENTS_COLLECTION_NAME = 'events'
 const HEADQUARTERS_COLLECTION_NAME = 'headquarters'
 
