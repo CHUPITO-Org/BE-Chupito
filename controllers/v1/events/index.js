@@ -7,8 +7,6 @@ const eventController = require('./event.controller')
 const router = express.Router()
 
 router.get('/', eventsController.get)
-// router.post('/', eventDBController.post)
-//router.get('/', eventDBController.get)
 
 router.get('/:id', eventController.get)
 router.post('/', eventController.post)
