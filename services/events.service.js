@@ -1,6 +1,6 @@
 'use strict'
 
-const { ObjectId, Db } = require('mongodb')
+const { ObjectId } = require('mongodb')
 
 const BaseService = require('./base.service')
 const environmentVars = require('../environment')
@@ -69,22 +69,17 @@ class EventsService extends BaseService {
   }
 
   async findById(id) {
-    let event = null
+    const { APP_DB, DEFAULT_DB } = environmentVars.getEnvironmentVariables()
     let response
-
     try {
-      event = await this.getEventData(id)
-      event.id = id
+      if (!id) throw new Error(`id is necessary`)
+      const event =
+        APP_DB === DEFAULT_DB ? await this.findByIdFromMongo(id) : await this.getEventData(id)
 
-      // TODO: Create a constants object and replace this message
-      const successMessage = 'Getting event information successfully'
-      response = this.getSuccessResponse(event, successMessage)
+      event.id = id
+      response = this.getSuccessResponse(event, 'Getting event information successfully')
     } catch (err) {
-      const errorMessage = `Error getting event ${id} information`
-      /* eslint-disable no-console */
-      // console.error(errorMessage, err);
-      /* eslint-enable */
-      response = this.getErrorResponse(errorMessage)
+      response = this.getErrorResponse(`Error getting event information: ${err.message}`)
     }
 
     return response
@@ -314,6 +309,7 @@ class EventsService extends BaseService {
 
   async doListFromFirebase(eventParams) {
     let allEvents = []
+
     const { year, withAttendees, headquarterId, showAllStatus } = eventParams
 
     let rootQuery = this.collection
@@ -349,7 +345,6 @@ class EventsService extends BaseService {
 
   async doListFromMongo(eventParams) {
     try {
-      const events = []
       const queryEvents = {}
 
       const { year, headquarterId } = eventParams
@@ -363,11 +358,21 @@ class EventsService extends BaseService {
       }
 
       const data = await this.collection.find(queryEvents).toArray()
+
       // TODO: colocar estructura
       return data
     } catch (error) {
       return error
     }
+  }
+
+  async findByIdFromMongo(id) {
+    const data = await this.collection.findOne({ _id: new ObjectId(id) })
+
+    if (!data) {
+      throw new Error(`Event ${id} not found`)
+    }
+    return data
   }
 }
 
