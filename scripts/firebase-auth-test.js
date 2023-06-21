@@ -1,28 +1,37 @@
-const admin = require('firebase-admin')
 const environment = require('../environment')
-const serviceAccount = require('./../services-config/app.json')
+const { getAuth, signInWithEmailAndPassword } = require('firebase/auth')
+const { initializeApp } = require('firebase/app')
 
-const firebaseConfig = environment.getFirebaseConfig()
-const account = { ...serviceAccount }
+const firebaseSetup = environment.getFirebaseConfig()
 
+const firebaseConfig = {
+  apiKey: firebaseSetup.API_KEY,
+  authDomain: firebaseSetup.AUTH_DOMAIN,
+  projectId: firebaseSetup.PROJECT_ID,
+  storageBucket: firebaseSetup.STORAGE_BUCKET,
+  messagingSenderId: firebaseSetup.MESSAGING_SENDER_ID,
+  appId: firebaseSetup.APP_ID,
+  measurementId: firebaseSetup.MEASUREMENT_ID,
+}
 
-account.project_id =  firebaseConfig.AUTH_PROJECT_ID
-account.private_key_id = firebaseConfig.AUTH_PRIVATE_KEY_ID
-account.private_key = firebaseConfig.AUTH_PRIVATE_KEY
-account.client_email = firebaseConfig.AUTH_CLIENT_EMAIL
-account.client_id = firebaseConfig.AUTH_CLIENT_ID
-account.client_x509_cert_url = firebaseConfig.AUTH_CLIENT_X509_CERT_URL
+let app = null
 
-admin.initializeApp({
-  credential: admin.credential.cert(account),
-})
+const getFirebaseApp = () => {
+  if (!app) {
+    app = initializeApp(firebaseConfig)
+  }
+  return app
+}
 
-admin
-  .auth()
-  .createCustomToken(firebaseConfig.TEST_USER)
-  .then(customToken => {
-    console.log('Custom token:', customToken)
+const runAuthentication = async () => {
+  const auth = getAuth(getFirebaseApp())
+
+  const email = firebaseSetup.TEST_EMAIL
+  const password = firebaseSetup.TEST_PASSWORD
+
+  signInWithEmailAndPassword(auth, email, password).then(userCredential => {
+    userCredential.user.getIdToken().then(token => console.log('token: ', token))
   })
-  .catch(error => {
-    console.error('Error creating custom token:', error)
-  })
+}
+
+runAuthentication()
