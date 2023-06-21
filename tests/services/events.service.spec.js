@@ -33,15 +33,13 @@ test.beforeEach(() => {
         toArray: sandbox.stub().returns(mockMongoDBCollectionList.get(collectionName, 2)),
       }),
       findOne: sandbox.stub().resolves({
-        id: new ObjectId(),
-        name: 'Juan Perez',
-        date: 'Perez',
-        headquarter: {
-          id: 'aaaaaaa',
-          name: 'Buenos Aires',
-        },
+        id: '647f965453db8aad4edf33d1',
+        address: '121 Main Street',
+        eventDate: '2023-06-15T17:00:00.000',
+        name: 'Development Day',
         status: 'created',
-        address: '120 Main Street',
+        year: 2023,
+        headquarter: '647f965453db8aad4edf33cf',
       }),
       deleteOne: sandbox.stub().resolves(),
       insertOne: sandbox.stub().resolves({ id: 10000 }),
@@ -128,20 +126,34 @@ test.skip('Do list all events with year and headquarter', async t => {
   })
 })
 
-test.skip('Get event', async t => {
-  const eventId = 'abcdefghi'
+test.serial('Find an event by id', async t => {
+  const eventId = '647f965453db8aad4edf33d1'
 
   let eventData = await eventsService.findById(eventId)
 
   t.is(eventData.hasOwnProperty('message'), true, 'Expected message key')
   t.is(eventData.hasOwnProperty('data'), true, 'Expected data key')
-  t.is(eventData['data'].hasOwnProperty('id'), true, 'Expected documentId key')
   t.is(eventData['data'].hasOwnProperty('name'), true, 'Expected name key')
-  t.is(eventData['data'].hasOwnProperty('lastname'), true, 'Expected lastname key')
-  t.is(eventData['data'].hasOwnProperty('avatarUrl'), true, 'Expected avatarUrl key')
-  t.is(eventData['data'].hasOwnProperty('isAdmin'), true, 'Expected isAdmin key')
+  t.is(eventData['data'].hasOwnProperty('address'), true, 'Expected address key')
+  t.is(eventData['data'].hasOwnProperty('year'), true, 'Expected year key')
+  t.is(eventData['data'].hasOwnProperty('status'), true, 'Expected status key')
   t.is(eventData['data']['id'], eventId, 'Expected same document Id')
 })
+
+test.serial(
+  'Given an exception when the id is not a string of 12 bytes, or a string of 24 hex characters, or an integer',
+  async t => {
+    const eventId = '647f965453d'
+    try {
+      await eventsService.findById(eventId)
+    } catch (error) {
+      t.is(
+        error.message,
+        'Error getting event information: Argument passed in must be a string of 12 bytes or a string of 24 hex characters or an integer'
+      )
+    }
+  }
+)
 
 test.skip('Update event', async t => {
   const eventId = 1,
