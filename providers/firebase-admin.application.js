@@ -17,7 +17,7 @@ account.client_x509_cert_url = process.env.CLIENT_CERT_URL
 
 let app = null
 
-module.exports = () => {
+module.exports = () => { 
   if (!app) {
     app = admin.initializeApp({
       credential: admin.credential.cert(account),
