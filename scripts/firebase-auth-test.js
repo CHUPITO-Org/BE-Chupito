@@ -28,7 +28,6 @@ const runAuthentication = async () => {
 
   const email = firebaseSetup.TEST_EMAIL
   const password = firebaseSetup.TEST_PASSWORD
-
   signInWithEmailAndPassword(auth, email, password).then(userCredential => {
     userCredential.user.getIdToken().then(token => console.log('token: ', token))
   })

@@ -3,8 +3,6 @@ const dotenv = require('dotenv')
 const DEFAULT_DATABASE = 'mongodb'
 const EVENTS_COLLECTION_NAME = 'events'
 const HEADQUARTERS_COLLECTION_NAME = 'headquarters'
-const USER_ID = 'testuser@chupito.com'
-const USER_PWD = 'TesT#975'
 
 dotenv.config()
 
@@ -31,8 +29,8 @@ function getFirebaseConfig() {
     MESSAGING_SENDER_ID: process.env.AUTH_MESSAGING_SENDER_ID,
     APP_ID: process.env.AUTH_APP_ID,
     MEASUREMENT_ID: process.env.AUTH_MEASUREMENT_ID,
-    TEST_EMAIL: USER_ID,
-    TEST_PASSWORD: USER_PWD,
+    TEST_EMAIL: process.env.TEST_USER_EMAIL,
+    TEST_PASSWORD: process.env.TEST_USER_PWD,
   }
 }
 
