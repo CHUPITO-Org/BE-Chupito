@@ -13,6 +13,7 @@ let eventController
 let eventsService = null
 const mockStorageService = {}
 let baseController
+let authService = {}
 
 test.beforeEach(() => {
   sandbox = sinon.createSandbox()
@@ -21,6 +22,7 @@ test.beforeEach(() => {
   eventsService.findById = sandbox.stub()
   eventsService.remove = sandbox.stub()
   eventsService.addAttendees = sandbox.stub()
+  authService.verifyToken = sandbox.stub()
 
   mockStorageService.eraseList = sandbox.stub()
 
@@ -41,6 +43,7 @@ const getController = service => {
             addAttendees: service.addAttendees,
             findById: service.findById,
             remove: service.remove,
+            verifyToken : authService.verifyToken
           }
         case 'storage':
           return {
@@ -142,8 +145,10 @@ test.serial('Add attendees: success response', async t => {
     body: {
       attendees: attendees,
     },
+    headers: {
+      authorization: 'Bearer  MyTOKEN',
+    },
   })
-
   const res = mockResponse()
   const eventServiceResponse = {
     responseCode: 200,
@@ -153,6 +158,14 @@ test.serial('Add attendees: success response', async t => {
     },
     message: '',
   }
+  const token = req.headers.authorization.replace('Bearer ', '')
+  const authServiceResponse = {
+    status: true,
+    data: { verified: true },
+    message: 'Successfully verified Token',
+    responseCode: 200,
+  }
+  authService.verifyToken.withArgs(token).returns(Promise.resolve(authServiceResponse))
 
   eventsService.addAttendees
     .withArgs(eventId, attendees)
@@ -220,8 +233,7 @@ test.serial('Delete event: success response with images', async t => {
       images: [
         {
           id: '0e2a46f4-e21b-4db6-a724-dadbca3b34fc',
-          url:
-            'https://firebasestorage.googleapis.com/2F0e2a46f4aaaa-e21bcccc-4db6-a724-dadbca3b34fc',
+          url: 'https://firebasestorage.googleapis.com/2F0e2a46f4aaaa-e21bcccc-4db6-a724-dadbca3b34fc',
         },
       ],
     },
