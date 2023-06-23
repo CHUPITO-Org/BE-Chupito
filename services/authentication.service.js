@@ -104,17 +104,17 @@ class AuthenticationService extends BaseService {
     let responseData = {
       verified: false,
     }
-
+    
     try {
       const currentToken = await this.adminAuth.verifyIdToken(token)
-
+      
       if (!currentToken) {
         return {
           message: 'Unverified Token',
           data: responseData,
         }
       }
-
+      
       const successMessage = 'Successfully verified Token'
       responseData.verified = true
       response = this.getSuccessResponse(responseData, successMessage)

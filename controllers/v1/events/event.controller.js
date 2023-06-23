@@ -264,18 +264,20 @@ const close = async (request, response) => {
 
 const addAttendees = async (request, response) => {
   const eventsService = await serviceContainer('events')
-
+  const authService = await serviceContainer('authentication')
   if (!request.params.id || !request.body.attendees) {
     return response.status(400).json(baseController.getErrorResponse('Wrong parameters'))
   }
-
+  
   const id = request.params.id
   const attendees = request.body.attendees
+  const token = request.headers.authorization.replace('Bearer ','')
 
   let responseCode
   let responseData
 
   try {
+    const authVerifyResponse = await authService.verifyToken(token)
     const addAttendeesResponse = await eventsService.addAttendees(id, attendees)
 
     responseCode = addAttendeesResponse.responseCode
