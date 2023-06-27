@@ -43,7 +43,7 @@ const getController = service => {
             addAttendees: service.addAttendees,
             findById: service.findById,
             remove: service.remove,
-            verifyToken : authService.verifyToken
+            verifyToken: authService.verifyToken,
           }
         case 'storage':
           return {
@@ -161,14 +161,14 @@ test.serial('Add attendees: success response', async t => {
   const token = req.headers.authorization.replace('Bearer ', '')
   const authServiceResponse = {
     status: true,
-    data: { verified: true },
+    data: { verified: true, id: 'sRrmUhxMgrhA1WeMyQp9CzzxyO92' },
     message: 'Successfully verified Token',
     responseCode: 200,
   }
   authService.verifyToken.withArgs(token).returns(Promise.resolve(authServiceResponse))
 
   eventsService.addAttendees
-    .withArgs(eventId, attendees)
+    .withArgs(eventId, 'sRrmUhxMgrhA1WeMyQp9CzzxyO92')
     .returns(Promise.resolve(eventServiceResponse))
 
   eventController = getController(eventsService)
