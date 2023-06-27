@@ -73,6 +73,7 @@ test.serial('Check get event: validate params', async t => {
 
 test.serial('Check get event: retrieve event', async t => {
   const eventId = 'aaaaaaaaa'
+  const description = 'Mocked Description'
   const req = mockRequest({
     params: {
       id: eventId,
@@ -82,6 +83,7 @@ test.serial('Check get event: retrieve event', async t => {
   const eventServiceResponse = {
     data: {
       id: eventId,
+      description: description
     },
     message: 'Getting event information successfully',
     responseCode: 200,
@@ -102,7 +104,10 @@ test.serial('Check get event: retrieve event', async t => {
   t.true(
     res.json.calledWith({
       status: baseController.successStatus,
-      data: eventServiceResponse.data,
+      data: {
+        id: eventServiceResponse.data.id,
+        description: eventServiceResponse.data.description,
+      },
       message: eventServiceResponse.message,
     }),
     'Expected response json was executed'
