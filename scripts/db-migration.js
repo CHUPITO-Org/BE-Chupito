@@ -133,7 +133,7 @@ const verifyDataMigration = (mongoCollectionData, firebaseCollectionData) => {
     firebaseCollectionData.every(firebaseItem =>
       mongoCollectionData.some(mongoDBItem => mongoDBItem.name === firebaseItem.name)
     )
-  console.log('verify -----> ', hasMatch)
+
   if (!hasMatch) {
     console.error('Collection data mismatch between MongoDB and Firebase')
   }
