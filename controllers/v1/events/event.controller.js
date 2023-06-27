@@ -268,17 +268,18 @@ const addAttendees = async (request, response) => {
   if (!request.params.id || !request.body.attendees) {
     return response.status(400).json(baseController.getErrorResponse('Wrong parameters'))
   }
-  
+
   const id = request.params.id
-  const attendees = request.body.attendees
-  const token = request.headers.authorization.replace('Bearer ','')
+
+  const token = request.headers.authorization.replace('Bearer ', '')
 
   let responseCode
   let responseData
 
   try {
     const authVerifyResponse = await authService.verifyToken(token)
-    const addAttendeesResponse = await eventsService.addAttendees(id, attendees)
+
+    const addAttendeesResponse = await eventsService.addAttendees(id, authVerifyResponse.data.id)
 
     responseCode = addAttendeesResponse.responseCode
     responseData = baseController.getSuccessResponse(

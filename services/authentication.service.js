@@ -103,27 +103,25 @@ class AuthenticationService extends BaseService {
     let response
     let responseData = {
       verified: false,
+      id: '',
     }
-    
+
     try {
-      const currentToken = await this.adminAuth.verifyIdToken(token)
-      
-      if (!currentToken) {
+      const uid = await this.adminAuth.verifyIdToken(token).then(decodedToken => {
+        return decodedToken.uid
+      })
+
+      if (!uid) {
         return {
           message: 'Unverified Token',
           data: responseData,
         }
       }
-      
-      const successMessage = 'Successfully verified Token'
       responseData.verified = true
-      response = this.getSuccessResponse(responseData, successMessage)
+      responseData.id = uid
+      response = this.getSuccessResponse(responseData, 'Successfully verified Token')
     } catch (err) {
-      const errorMessage = 'Error while verifying token id'
-      /* eslint-disable no-console */
-      console.error(errorMessage, err)
-      /* eslint-enable */
-      response = this.getErrorResponse(errorMessage)
+      response = this.getErrorResponse('Error while verifying token id')
     }
 
     return response

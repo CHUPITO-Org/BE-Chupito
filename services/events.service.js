@@ -246,13 +246,12 @@ class EventsService extends BaseService {
     return response
   }
 
-  async addAttendees(id, attendees) {
+  async addAttendees(id, idAttendees) {
     let response
 
     try {
-      let dataSnapshot = await this.collection.doc(id).get()
-
-      const event = dataSnapshot.exists ? dataSnapshot.data() : null
+      const dataSnapshot = await this.findById(id)
+      const event = dataSnapshot ? dataSnapshot.data : null
 
       if (!event) {
         throw new Error({ message: `The event id ${id} was not found` })
@@ -262,31 +261,23 @@ class EventsService extends BaseService {
         event.attendees = []
       }
 
-      attendees.map(attendee => {
-        const addedIndex = event.attendees.findIndex(addedAttendee => {
-          return addedAttendee.id === attendee.id
-        })
-
-        if (addedIndex < 0) {
-          event.attendees.push(attendee)
-        }
+      const addedIndex = event.attendees.findIndex(addedAttendee => {
+        return addedAttendee === idAttendees
       })
 
-      event.id = id
+      if (addedIndex < 0) {
+        event.attendees.push(idAttendees)
+      }
 
-      await this.collection.doc(id).update(event)
+      await this.collection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: { attendees: event.attendees } }
+      )
 
-      // TODO: Create a constants object and replace this message
-      const successMessage = 'Attendees added succesfully'
-      response = this.getSuccessResponse(event, successMessage)
+      response = this.getSuccessResponse(event, 'Attendees added succesfully')
     } catch (err) {
-      const errorMessage = 'Error while adding attendees to event'
-      /* eslint-disable no-console */
-      // console.error(errorMessage, err)
-      /* eslint-enable */
-      response = this.getErrorResponse(errorMessage)
+      response = this.getErrorResponse('Error while adding attendees to event')
     }
-
     return response
   }
 

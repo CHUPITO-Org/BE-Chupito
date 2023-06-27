@@ -190,18 +190,11 @@ test.skip('Update event deleting images', async t => {
   t.is(updatedData.hasOwnProperty('data'), true, 'Expected data key')
 })
 
-test.skip('Add attendees', async t => {
-  const eventId = '1vZHkInPqe1bShakHXiN',
-    attendees = [
-      {
-        name: 'Juan Perez',
-      },
-      {
-        name: 'Andrew Garfield',
-      },
-    ]
+test.serial('Add attendees', async t => {
+  const eventId = '1vZHkInPqe1bShakHXiN'
+  const uidUser = 'sRrmUhxMgrhA1WeMyQp9CzzxyO92'
 
-  let addAttendeesResponse = await eventsService.addAttendees(eventId, attendees)
+  let addAttendeesResponse = await eventsService.addAttendees(eventId, uidUser)
 
   t.is(addAttendeesResponse.hasOwnProperty('message'), true, 'Expected message key')
   t.is(addAttendeesResponse.hasOwnProperty('data'), true, 'Expected data key')
