@@ -16,7 +16,7 @@ class UserService extends BaseService {
   async create(userData) {
     let response
     const newUserData = {
-      ...userData
+      ...userData,
     }
 
     try {
@@ -37,20 +37,20 @@ class UserService extends BaseService {
   }
 
   async doList() {
-    let allUsers = [];
-    let response;
+    let allUsers = []
+    let response
 
     try {
-      let userRefSnapshot = await this.collection.get();
+      let userRefSnapshot = await this.collection.get()
 
-      userRefSnapshot.forEach((doc) => {
-        let userData = doc.data();
-        userData.id = doc.id;
-        allUsers.push(userData);
-      });
+      userRefSnapshot.forEach(doc => {
+        let userData = doc.data()
+        userData.id = doc.id
+        allUsers.push(userData)
+      })
 
-      const successMessage = 'Getting all user list information successfully.';
-      response = this.getSuccessResponse(allUsers, successMessage);
+      const successMessage = 'Getting all user list information successfully.'
+      response = this.getSuccessResponse(allUsers, successMessage)
     } catch (err) {
       const errorMessage = 'Error getting user list information'
       /* eslint-disable no-console */
@@ -59,34 +59,62 @@ class UserService extends BaseService {
       response = this.getErrorResponse(errorMessage)
     }
 
-    return response;
+    return response
   }
 
   async findById(id) {
     let response
 
     try {
-      const userRefSnapshot = await this.collection.doc(id).get();
+      const userRefSnapshot = await this.collection.doc(id).get()
 
       if (!userRefSnapshot.exists) {
-        return this.getSuccessResponse({}, 'No existing data');
+        return this.getSuccessResponse({}, 'No existing data')
       }
       const user = {
         ...userRefSnapshot.data(),
-        id: id
-      };
+        id: id,
+      }
 
-      const successMessage = 'Getting user information successfully';
-      response = this.getSuccessResponse(user, successMessage);
+      const successMessage = 'Getting user information successfully'
+      response = this.getSuccessResponse(user, successMessage)
     } catch (err) {
-      const errorMessage = 'Error getting user information';
+      const errorMessage = 'Error getting user information'
       /* eslint-disable no-console */
       // console.error(errorMessage, err);
       /* eslint-enable */
-      response = this.getErrorResponse(errorMessage);
+      response = this.getErrorResponse(errorMessage)
     }
 
     return response
+  }
+  async checkUserAttendeeStatus(eventId, userId, eventsService) {
+    let response
+
+    try {
+      const eventData = await eventsService.findById(eventId)
+      if (!eventData) {
+        return this.getSuccessResponse(
+          { attendanceConfirmed: false },
+          'No existing data for this event'
+        )
+      }
+
+      const userData = eventData.data.attendees.find(attendee => attendee === userId)
+      if (!userData) {
+        return this.getSuccessResponse(
+          { attendanceConfirmed: false },
+          'User not registered as an attendee for this event'
+        )
+      }
+
+      return this.getSuccessResponse(
+        { attendanceConfirmed: true },
+        'User is an attendee of the event.'
+      )
+    } catch (err) {
+      return (response = this.getErrorResponse('Error getting user information'))
+    }
   }
 
   async findByUserId(userId) {
@@ -94,10 +122,7 @@ class UserService extends BaseService {
     let response
 
     try {
-      let userRefSnapshot = await this.collection
-        .where('uid', '==', userId)
-        .limit(1)
-        .get()
+      let userRefSnapshot = await this.collection.where('uid', '==', userId).limit(1).get()
 
       if (userRefSnapshot.docs.length === 1) {
         user = userRefSnapshot.docs[0].data()
@@ -132,27 +157,26 @@ class UserService extends BaseService {
   async toggleEnable(id) {
     let response
     try {
-      const userInfoRef = await this.collection.doc(id).get();
+      const userInfoRef = await this.collection.doc(id).get()
 
-      const userData = userInfoRef.data();
-      userData.isEnabled = !userData.isEnabled;
+      const userData = userInfoRef.data()
+      userData.isEnabled = !userData.isEnabled
 
       await this.collection.doc(id).update({
-        isEnabled: userData.isEnabled
-      });
+        isEnabled: userData.isEnabled,
+      })
 
-      const successMessage = 'User was disabled successfully';
-      response = this.getSuccessResponse(userData, successMessage);
-
+      const successMessage = 'User was disabled successfully'
+      response = this.getSuccessResponse(userData, successMessage)
     } catch (err) {
-      const errorMessage = 'Error removing a user';
+      const errorMessage = 'Error removing a user'
       /* eslint-disable no-console */
       // console.error(errorMessage, err);
       /* eslint-enable */
-      response = this.getErrorResponse(errorMessage);
+      response = this.getErrorResponse(errorMessage)
     }
 
-    return response;
+    return response
   }
 
   async update(userId, userData) {
@@ -165,7 +189,7 @@ class UserService extends BaseService {
       let userInfoRef = await this.collection.doc(userId).get()
       userResponse = {
         ...userInfoRef.data(),
-        id: userId
+        id: userId,
       }
 
       const successMessage = 'User was updated successfully'
@@ -180,7 +204,6 @@ class UserService extends BaseService {
 
     return response
   }
-
 }
 
 module.exports = UserService

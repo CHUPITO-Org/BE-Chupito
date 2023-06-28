@@ -6,6 +6,8 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const fileParser = require('express-multipart-file-parser')
 
+const serviceContainer = require('./services/service.container')
+
 global.XMLHttpRequest = require('xhr2')
 
 app.use(cors())
@@ -31,18 +33,23 @@ app.use(async (request, response, next) => {
     return
   }
 
-  const token = request.headers['authorization']
-
-  if (!token) {
-    response.status(401).json({ status: '401', message: 'Unauthorized', data: {} })
-    return
-  }
-
   try {
-    next()
+    const token = request.headers['authorization'].replace('Bearer ', '')
+
+    const authService = await serviceContainer('authentication')
+    const authVerifyResponse = await authService.verifyToken(token)
+
+    if (!authVerifyResponse.status) {
+      return response.status(401).json({ status: '401', message: 'Unauthorized', data: {} })
+    }
+
+    request.user = { id: authVerifyResponse.data.id }
   } catch (error) {
-    response.status(500).json({ status: '500', message: 'Error while verifying token', data: {} })
+    return response
+      .status(500)
+      .json({ status: '500', message: 'Error occurred during token verification', data: {} })
   }
+  next()
 })
 
 app.use(bodyParser.json({ limit: '100mb' })) // to support JSON-encoded bodies
