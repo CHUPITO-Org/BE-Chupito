@@ -279,6 +279,15 @@ const addAttendees = async (request, response) => {
   try {
     const authVerifyResponse = await authService.verifyToken(token)
 
+    console.log('VERIFICAR', authVerifyResponse)
+
+    if (authVerifyResponse.verified === false) {
+      return response
+        .status(400)
+        .json(baseController.getErrorResponse('Error while verifying token id'))
+    }
+
+    console.log('VERIFICACION', authVerifyResponse.status === false)
     const addAttendeesResponse = await eventsService.addAttendees(id, authVerifyResponse.data.id)
 
     responseCode = addAttendeesResponse.responseCode
