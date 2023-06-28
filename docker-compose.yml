@@ -11,5 +11,17 @@ services:
     volumes:
       - 'chupito_mongo_data:/data/db'
 
+  web:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: be-chupito
+    ports:
+      - "5002:5002"
+    depends_on:
+      - mongo
+    environment:
+      - MONGODB_URI=mongodb://mongoDev:Passw0rd@mongo:27017/?authSource=admin
+
 volumes:
   chupito_mongo_data: null
