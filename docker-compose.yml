@@ -11,7 +11,7 @@ services:
     volumes:
       - 'chupito_mongo_data:/data/db'
 
-  web:
+  app:
     build: 
       context: .
       dockerfile: Dockerfile
