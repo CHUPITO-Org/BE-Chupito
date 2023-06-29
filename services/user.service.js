@@ -27,9 +27,6 @@ class UserService extends BaseService {
       response = this.getSuccessResponse(newUserData, successMessage)
     } catch (error) {
       const errorMessage = 'Error creating user document'
-      /* eslint-disable no-console */
-      // console.error(errorMessage, err)
-      /* eslint-enable */
       response = this.getErrorResponse(errorMessage)
     }
 
@@ -46,16 +43,13 @@ class UserService extends BaseService {
       userRefSnapshot.forEach(doc => {
         let userData = doc.data()
         userData.id = doc.id
-        allUsers.push(userData)
+        allUsers.push(doc.data())
       })
 
       const successMessage = 'Getting all user list information successfully.'
       response = this.getSuccessResponse(allUsers, successMessage)
     } catch (err) {
       const errorMessage = 'Error getting user list information'
-      /* eslint-disable no-console */
-      // console.error(errorMessage, err)
-      /* eslint-enable */
       response = this.getErrorResponse(errorMessage)
     }
 
@@ -80,9 +74,6 @@ class UserService extends BaseService {
       response = this.getSuccessResponse(user, successMessage)
     } catch (err) {
       const errorMessage = 'Error getting user information'
-      /* eslint-disable no-console */
-      // console.error(errorMessage, err);
-      /* eslint-enable */
       response = this.getErrorResponse(errorMessage)
     }
 
@@ -133,9 +124,6 @@ class UserService extends BaseService {
       response = this.getSuccessResponse(user, successMessage)
     } catch (err) {
       const errorMessage = 'Error getting user information'
-      /* eslint-disable no-console */
-      // console.error(errorMessage, err)
-      /* eslint-enable */
       response = this.getErrorResponse(errorMessage)
     }
 
@@ -170,9 +158,6 @@ class UserService extends BaseService {
       response = this.getSuccessResponse(userData, successMessage)
     } catch (err) {
       const errorMessage = 'Error removing a user'
-      /* eslint-disable no-console */
-      // console.error(errorMessage, err);
-      /* eslint-enable */
       response = this.getErrorResponse(errorMessage)
     }
 
@@ -196,9 +181,6 @@ class UserService extends BaseService {
       response = this.getSuccessResponse(userResponse, successMessage)
     } catch (err) {
       const errorMessage = 'Error updating a user'
-      /* eslint-disable no-console */
-      // console.error(errorMessage, err)
-      /* eslint-enable */
       response = this.getErrorResponse(errorMessage)
     }
 
