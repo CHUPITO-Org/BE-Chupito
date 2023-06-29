@@ -283,6 +283,7 @@ const addAttendees = async (request, response) => {
   try {
     const authVerifyResponse = await authService.verifyToken(token)
 
+
     if (authVerifyResponse.status === false) {
       return response
         .status(400)

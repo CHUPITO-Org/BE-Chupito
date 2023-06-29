@@ -77,6 +77,10 @@ class EventsService extends BaseService {
         APP_DB === DEFAULT_DB ? await this.findByIdFromMongo(id) : await this.getEventData(id)
 
       event.id = id
+      if (!event.description) {
+        event.description =
+          'Welcome to Chupito! We are pleased to have your interest in this event. This event does not have a description available; it will be updated soon'
+      }
       response = this.getSuccessResponse(event, 'Getting event information successfully')
     } catch (err) {
       response = this.getErrorResponse(`Error getting event information: ${err.message}`)
