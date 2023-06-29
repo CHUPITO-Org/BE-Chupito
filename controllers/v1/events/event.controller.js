@@ -2,7 +2,8 @@
 
 const BaseController = require('../base.controller')
 const serviceContainer = require('../../../services/service.container')
-const _ = require('lodash')
+
+const isObjectEmpty = require('../../../helpers/utils')
 
 let baseController = new BaseController()
 
@@ -266,7 +267,7 @@ const close = async (request, response) => {
 const addAttendees = async (request, response) => {
   const eventsService = await serviceContainer('events')
   const authService = await serviceContainer('authentication')
-  if (!request.params.id || !request.body.attendees || _.isEmpty(request.body.attendees)) {
+  if (!request.params.id || !request.body.attendees || isObjectEmpty(request.body.attendees)) {
     return response.status(400).json(baseController.getErrorResponse('Wrong parameters'))
   }
 
