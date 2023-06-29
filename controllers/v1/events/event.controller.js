@@ -283,8 +283,7 @@ const addAttendees = async (request, response) => {
   try {
     const authVerifyResponse = await authService.verifyToken(token)
 
-
-    if (authVerifyResponse.status === false) {
+    if (!authVerifyResponse.status) {
       return response
         .status(400)
         .json(baseController.getErrorResponse('Error while verifying token id'))
