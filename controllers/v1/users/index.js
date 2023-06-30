@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.get('/', usersController.get);
 router.get('/:id', userController.get);
+router.get('/event/:id', userController.getUserAttendance);
 router.post('/', userController.post);
 router.put('/:id', userController.update);
 router.delete('/:id', userController.remove);

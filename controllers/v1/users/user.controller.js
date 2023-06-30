@@ -47,6 +47,36 @@ const getByUid = async (request, response) => {
 
   return response.status(userData.responseCode).json(responseData)
 }
+const getUserAttendance = async (request, response) => {
+  const userService = await serviceContainer('users')
+  const eventService = await serviceContainer('events')
+
+  const eventId = request.params.id
+  const userId = request.user.id
+  let responseData
+
+  if (!userId || !eventId) {
+    return response.status(400).json(baseController.getErrorResponse('Parameters are missing'))
+  }
+
+  try {
+    const { status, data, message } = await userService.checkUserAttendeeStatus(
+      eventId,
+      userId,
+      eventService
+    )
+
+    responseData = {
+      status,
+      data,
+      message,
+    }
+  } catch (err) {
+    console.error('Error verifying user attendance: ', err)
+    responseData = baseController.getErrorResponse('Error verifying user attendance')
+  }
+  return response.json(responseData)
+}
 
 const post = async (request, response) => {
   const userService = await serviceContainer('users')
@@ -206,6 +236,7 @@ const changePassword = async (request, response) => {
 module.exports = {
   get,
   getByUid,
+  getUserAttendance,
   post,
   update,
   remove,
