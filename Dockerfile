@@ -7,8 +7,7 @@ WORKDIR /application
 COPY . .
 
 # Everything in a single RUN, to avoid unecessary docker layers.
-RUN echo "Starting" \
-     && yarn install --production
+RUN  yarn install --production
 
 # Silent start because we want to have our log format as the first log
 CMD ["npm", "start"]

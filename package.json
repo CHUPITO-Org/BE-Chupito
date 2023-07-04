@@ -8,7 +8,9 @@
     "test": "nyc --reporter=lcov ava",
     "watch:test": "ava --watch",
     "lint": "npx eslint .",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test:ci": "yarn test --coverage",
+    "test:coverage": "yarn test --coverage"
   },
   "repository": {
     "type": "git",
