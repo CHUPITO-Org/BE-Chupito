@@ -192,9 +192,8 @@ class UserService extends BaseService {
     try {
       const eventsData = await eventsService.doList({})
       if (!eventsData) {
-        return this.getSuccessResponse('No existing events to check')
+        return this.getSuccessResponse({},'No existing events to check')
       }
-
       const responseData = await this.addRegisteredField(userId, eventsData.data)
 
       return this.getSuccessResponse(responseData, 'Events retrieved successfully.')
@@ -218,6 +217,7 @@ class UserService extends BaseService {
         }
       }
     )
+    console.log(updatedEvents)
     return updatedEvents
   }
 }
