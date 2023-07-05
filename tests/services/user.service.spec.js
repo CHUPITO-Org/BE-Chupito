@@ -295,7 +295,7 @@ test.serial('Get user attendance: error getting user information', async t => {
   t.is(attendanceResponse['message'], 'Error getting user information', 'Expected error message')
 })
 
-test.serial('Fetch user event attendance: success', async t => {
+test.serial('Fetch user events attendance: success', async t => {
   const userId = 'user-id'
   const expectedResponse = {
     id: 'event-1',
@@ -306,7 +306,7 @@ test.serial('Fetch user event attendance: success', async t => {
     subscribed: true,
   }
 
-  const fetchedData = await userService.fetchUserEventAttendance(userId, eventsService)
+  const fetchedData = await userService.fetchUserEventsAttendance(userId, eventsService)
 
   t.is(fetchedData.responseCode, 200, 'Expected response code to be 200')
   t.is(fetchedData.hasOwnProperty('status'), true, 'Expected status key')
@@ -319,13 +319,13 @@ test.serial('Fetch user event attendance: success', async t => {
   t.deepEqual(fetchedData.data[1].subscribed, false, 'Expected subscribed status')
 })
 
-test.serial('Fetch user event attendance: no events', async t => {
+test.serial('Fetch user events attendance: no events', async t => {
   const userId = 'user-id'
   const eventsService = {
     doList: sinon.stub().resolves(null),
   }
 
-  const fetchedData = await userService.fetchUserEventAttendance(userId, eventsService)
+  const fetchedData = await userService.fetchUserEventsAttendance(userId, eventsService)
 
   t.is(fetchedData.responseCode, 200, 'Expected response code to be 200')
   t.is(fetchedData.message, 'No existing events to check', 'Expected response message')
@@ -333,13 +333,13 @@ test.serial('Fetch user event attendance: no events', async t => {
   t.deepEqual(fetchedData.data, {}, 'Expected data to be an empty object')
 })
 
-test.serial('Fetch user event attendance: error', async t => {
+test.serial('Fetch user events attendance: error', async t => {
   const userId = 'user-id'
   const eventsService = {
     doList: sinon.stub().rejects(new Error('Error getting user information')),
   }
 
-  const fetchedData = await userService.fetchUserEventAttendance(userId, eventsService)
+  const fetchedData = await userService.fetchUserEventsAttendance(userId, eventsService)
 
   t.is(fetchedData.responseCode, 500, 'Expected response code to be 500')
   t.is(fetchedData.message, 'Error getting user information', 'Expected error response message')

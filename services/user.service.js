@@ -186,7 +186,7 @@ class UserService extends BaseService {
 
     return response
   }
-  async fetchUserEventAttendance(userId, eventsService) {
+  async fetchUserEventsAttendance(userId, eventsService) {
     let response
 
     try {

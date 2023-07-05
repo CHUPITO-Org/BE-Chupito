@@ -89,7 +89,7 @@ const getUserEventsAttendance = async (request, response) => {
   }
 
   try {
-    const { status, data, message } = await userService.fetchUserEventAttendance(userId, eventService)
+    const { status, data, message } = await userService.fetchUserEventsAttendance(userId, eventService)
 
     responseData = {
       status,
