@@ -6,6 +6,7 @@ const { mockRequest, mockResponse } = require('mock-req-res')
 const proxyquire = require('proxyquire')
 
 const BaseController = require('../../../../controllers/v1/base.controller')
+const { mock } = require('node:test')
 
 let sandbox = null
 
@@ -14,6 +15,7 @@ let baseController
 let userService
 const mockUserService = {}
 const authenticationService = {}
+const mockEventsService = {}
 
 test.beforeEach(() => {
   sandbox = sinon.createSandbox()
@@ -27,6 +29,9 @@ test.beforeEach(() => {
   mockUserService.toggleEnable = sandbox.stub()
   mockUserService.update = sandbox.stub()
   mockUserService.getModel = sandbox.stub()
+  mockUserService.checkUserAttendeeStatus = sandbox.stub()
+
+  mockEventsService.findById = sandbox.stub()
 
   authenticationService.changePasswordUsingAdminSDK = sandbox.stub()
   authenticationService.changeAvailability = sandbox.stub()
@@ -49,6 +54,8 @@ const getController = () => {
         case 'authentication': {
           return authenticationService
         }
+        case 'events':
+          return mockEventsService
       }
     },
   })
@@ -294,4 +301,61 @@ test.serial('Remove user: success response', async t => {
     'Expected response status with success response'
   )
   t.true(res.json.called, 'Expected response json was executed')
+})
+
+test.serial('Get user attendance: validate params', async t => {
+  const req = mockRequest({
+    params: {},
+    user: { id: 'user-id' },
+  })
+  const res = mockResponse()
+
+  userController = getController()
+
+  await userController.getUserAttendance(req, res)
+
+  t.true(res.status.calledWith(400), 'Expected response status with an error response')
+  t.true(res.json.called, 'Expected response json was executed')
+})
+
+test.serial('Get user attendance: success response', async t => {
+  const eventId = 'event'
+  const userId = 'user-id'
+
+  const userServiceResponse = {
+    status: true,
+    data: {
+      attendanceConfirmed: true,
+    },
+    message: 'User is an attendee of the event.',
+  }
+
+  mockUserService.checkUserAttendeeStatus.returns(Promise.resolve(userServiceResponse))
+
+  const req = mockRequest({
+    params: {
+      id: 'event-id',
+    },
+    user: {
+      id: 'user-id',
+    },
+  })
+
+  let res = mockResponse()
+  res = {
+    statusCode: 200,
+    json: sinon.stub(),
+  }
+
+  userController = getController()
+  userController.userService = mockUserService
+
+  await userController.getUserAttendance(req, res)
+
+  t.is(res.statusCode, 200, 'Expected response status to be 200')
+  t.deepEqual(
+    res.json.firstCall.args[0],
+    userServiceResponse,
+    'Expected response json to match the data'
+  )
 })
