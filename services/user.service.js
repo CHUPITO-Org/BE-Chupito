@@ -43,7 +43,7 @@ class UserService extends BaseService {
       userRefSnapshot.forEach(doc => {
         let userData = doc.data()
         userData.id = doc.id
-        allUsers.push(doc.data())
+        allUsers.push(userData)
       })
 
       const successMessage = 'Getting all user list information successfully.'
