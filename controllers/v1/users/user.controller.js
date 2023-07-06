@@ -82,8 +82,6 @@ const getUserEventsAttendance = async (request, response) => {
   const eventService = await serviceContainer('events')
 
   const userId = request.user.id
-  let responseData
-
   if (!userId) {
     return response.status(400).json(baseController.getErrorResponse('Parameters are missing'))
   }
@@ -94,18 +92,17 @@ const getUserEventsAttendance = async (request, response) => {
       eventService
     )
 
-    responseData = {
+    const responseData = {
       status,
       data,
       message,
     }
-
+    return response.status(200).json(responseData)
   } catch (err) {
     return response
       .status(500)
       .json(baseController.getErrorResponse('Error verifying user attendance'))
   }
-  return response.status(200).json(responseData)
 }
 
 const post = async (request, response) => {
