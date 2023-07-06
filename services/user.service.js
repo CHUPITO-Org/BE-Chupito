@@ -186,6 +186,39 @@ class UserService extends BaseService {
 
     return response
   }
+  async fetchUserEventsAttendance(userId, eventsService) {
+    let response
+
+    try {
+      const eventsData = await eventsService.doList({})
+      if (!eventsData) {
+        return this.getSuccessResponse({},'No existing events to check')
+      }
+      const responseData = await this.addRegisteredField(userId, eventsData.data)
+
+      return this.getSuccessResponse(responseData, 'Events retrieved successfully.')
+    } catch (err) {
+      return this.getErrorResponse('Error getting user information')
+    }
+  }
+  async addRegisteredField(userId, events) {
+    const updatedEvents = await events.map(
+      ({ attendees, description, name, status, eventDate, _id }) => {
+        const isUserSubscribed = attendees ? attendees.some(attendee => attendee === userId) : false
+        const updatedDescription =
+          description || 'Calling all curious minds! Exciting event details coming soon.'
+        return {
+          id: _id.toString(),
+          name,
+          status,
+          eventDate,
+          description: updatedDescription,
+          subscribed: isUserSubscribed,
+        }
+      }
+    )
+    return updatedEvents
+  }
 }
 
 module.exports = UserService
