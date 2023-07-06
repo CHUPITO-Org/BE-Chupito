@@ -198,7 +198,7 @@ class UserService extends BaseService {
 
       return this.getSuccessResponse(responseData, 'Events retrieved successfully.')
     } catch (err) {
-      return (response = this.getErrorResponse('Error getting user information'))
+      return this.getErrorResponse('Error getting user information')
     }
   }
   async addRegisteredField(userId, events) {
