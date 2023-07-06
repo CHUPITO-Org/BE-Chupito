@@ -6,7 +6,6 @@ const { mockRequest, mockResponse } = require('mock-req-res')
 const proxyquire = require('proxyquire')
 
 const BaseController = require('../../../../controllers/v1/base.controller')
-const { mock } = require('node:test')
 
 let sandbox = null
 
@@ -30,8 +29,10 @@ test.beforeEach(() => {
   mockUserService.update = sandbox.stub()
   mockUserService.getModel = sandbox.stub()
   mockUserService.checkUserAttendeeStatus = sandbox.stub()
+  mockUserService.fetchUserEventsAttendance = sandbox.stub()
 
   mockEventsService.findById = sandbox.stub()
+  mockEventsService.doList = sandbox.stub()
 
   authenticationService.changePasswordUsingAdminSDK = sandbox.stub()
   authenticationService.changeAvailability = sandbox.stub()
@@ -84,6 +85,7 @@ test.serial('Get user: retrieve data', async t => {
     },
   })
   const res = mockResponse()
+
   const userServiceResponse = {
     responseCode: 200,
     data: [],
@@ -358,4 +360,74 @@ test.serial('Get user attendance: success response', async t => {
     userServiceResponse,
     'Expected response json to match the data'
   )
+})
+
+test.serial('Get user events attendance: success', async t => {
+  const fetchUserEventsAttendanceResponse = {
+    status: true,
+    data: [
+      {
+        id: 'event-1',
+        name: 'Event 1',
+        status: 'created',
+        eventDate: '2023-08-16T18:30:00.000',
+        description: 'Oops! No description',
+        subscribed: true,
+      },
+      {
+        id: 'event-2',
+        name: 'Event 2',
+        status: 'created',
+        eventDate: '2024-02-15T06:30:00.000',
+        description: 'Oops! No description',
+        subscribed: false,
+      },
+    ],
+    message: 'Events retrieved successfully.',
+  }
+  
+  const req = mockRequest({
+    user: {
+      id: 'user-id',
+    },
+  })
+  
+  const res = mockResponse()
+  
+  mockUserService.fetchUserEventsAttendance.resolves(fetchUserEventsAttendanceResponse)
+
+  userController = getController()
+
+  await userController.getUserEventsAttendance(req, res)
+
+  t.true(res.status.calledWith(200))
+  t.true(
+    res.json.calledWith({
+      status: fetchUserEventsAttendanceResponse.status,
+      data: fetchUserEventsAttendanceResponse.data,
+      message: fetchUserEventsAttendanceResponse.message,
+    })
+  )
+})
+
+test.serial('Get user events attendance: error verifying user attendance', async t => {
+  const userId = 'user-id'
+
+  userService = {
+    fetchUserEventsAttendance: sinon.stub().throws(new Error('Error verifying user attendance')),
+  }
+
+  const req = mockRequest({
+    user: { id: userId },
+  })
+  const res = mockResponse()
+
+  await userController.getUserEventsAttendance(req, res)
+
+  t.true(res.status.calledWith(500))
+  t.deepEqual(res.json.args[0][0], {
+    status: 'ERROR',
+    data: {},
+    message: 'Error verifying user attendance',
+  })
 })

@@ -89,16 +89,21 @@ const getUserEventsAttendance = async (request, response) => {
   }
 
   try {
-    const { status, data, message } = await userService.fetchUserEventsAttendance(userId, eventService)
+    const { status, data, message } = await userService.fetchUserEventsAttendance(
+      userId,
+      eventService
+    )
 
     responseData = {
       status,
       data,
       message,
     }
+
   } catch (err) {
-    console.error('Error verifying user attendance: ', err)
-    responseData = baseController.getErrorResponse('Error verifying user attendance')
+    return response
+      .status(500)
+      .json(baseController.getErrorResponse('Error verifying user attendance'))
   }
   return response.status(200).json(responseData)
 }
