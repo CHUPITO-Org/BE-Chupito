@@ -16,13 +16,13 @@ const setupAuthCodeService = require('./auth.codes.service')
 module.exports = async () => {
   let db = null
   const serviceProviders = await setupServiceProviders()
-
-  const authenticationService = new AuthenticationService(serviceProviders.adminAuth)
-  const userService = new UserService(serviceProviders.dbInstance)
-  const attendeesService = setupAttendeesService(serviceProviders.dbInstance)
   process.env.DB === 'mongodb'
     ? (db = serviceProviders.clientMongo)
     : (db = serviceProviders.dbInstance)
+    
+  const authenticationService = new AuthenticationService(serviceProviders.adminAuth)
+  const userService = new UserService(db)
+  const attendeesService = setupAttendeesService(serviceProviders.dbInstance)
   const eventsService = new EventsService(db)
   const rolesService = setupRolesService(serviceProviders.dbInstance)
   const headquartersService = new HeadquartersService(serviceProviders.dbInstance)

@@ -57,27 +57,21 @@ class UserService extends BaseService {
   }
 
   async findById(id) {
-    let response
-
     try {
-      const userRefSnapshot = await this.collection.doc(id).get()
+      const userRefSnapshot = await this.collection.findOne({ uid: id.toString() })
 
-      if (!userRefSnapshot.exists) {
+      if (!userRefSnapshot) {
         return this.getSuccessResponse({}, 'No existing data')
       }
-      const user = {
-        ...userRefSnapshot.data(),
-        id: id,
-      }
 
-      const successMessage = 'Getting user information successfully'
-      response = this.getSuccessResponse(user, successMessage)
+      return this.getSuccessResponse(
+        { id, ...userRefSnapshot },
+        'Getting user information successfully'
+      )
     } catch (err) {
-      const errorMessage = 'Error getting user information'
-      response = this.getErrorResponse(errorMessage)
+      console.log('Error getting user information', err)
+      return this.getErrorResponse('Error getting user information')
     }
-
-    return response
   }
   async checkUserAttendeeStatus(eventId, userId, eventsService) {
     let response
@@ -104,7 +98,7 @@ class UserService extends BaseService {
         'User is an attendee of the event.'
       )
     } catch (err) {
-      return (response = this.getErrorResponse('Error getting user information'))
+      return this.getErrorResponse('Error getting user information')
     }
   }
 

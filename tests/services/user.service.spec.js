@@ -120,6 +120,22 @@ test.beforeEach(() => {
     add: data => {
       return Promise.resolve({ id: 10000 })
     },
+    findOne: data => {
+      if (data.uid !== '00_id') {
+        return null
+      }
+
+      return {
+        _id: '00_mongoId',
+        email: 'test01@email.com',
+        name: 'Test',
+        lastName: 'User',
+        isAdmin: false,
+        avatarUrl: '',
+        role: 'user',
+        uid: '00_id',
+      }
+    },
   })
 
   userService = new UserService(dbInstanceStub)
@@ -186,22 +202,53 @@ test.serial('Do list all users', async t => {
   })
 })
 
-test.serial('Get user', async t => {
-  const docUserId = 'abcdefghi'
+test.serial('Get user: success response', async t => {
+  const docUserId = '00_id'
+  const expectedResponse = {
+    id: '00_id',
+    _id: '00_mongoId',
+    email: 'test01@email.com',
+    name: 'Test',
+    lastName: 'User',
+    isAdmin: false,
+    avatarUrl: '',
+    role: 'user',
+    uid: '00_id',
+  }
 
   let userInfo = await userService.findById(docUserId)
 
+  t.is(userInfo.responseCode, 200, 'Expected response code to be 200')
   t.is(userInfo.hasOwnProperty('message'), true, 'Expected message key')
   t.is(userInfo.hasOwnProperty('data'), true, 'Expected data key')
+  t.deepEqual(userInfo.data, expectedResponse, 'Expected data match with response')
+})
 
-  t.is(userInfo['data'].hasOwnProperty('userId'), true, 'Expected uid key')
-  t.is(userInfo['data'].hasOwnProperty('id'), true, 'Expected id key')
-  t.is(userInfo['data'].hasOwnProperty('name'), true, 'Expected name key')
-  t.is(userInfo['data'].hasOwnProperty('lastName'), true, 'Expected lastname key')
-  t.is(userInfo['data'].hasOwnProperty('avatarUrl'), true, 'Expected avatarUrl key')
-  t.is(userInfo['data'].hasOwnProperty('isAdmin'), true, 'Expected isAdmin key')
-  t.is(userInfo['data'].hasOwnProperty('isEnabled'), true, 'Expected isEnabled key')
-  t.is(userInfo['data'].hasOwnProperty('role'), true, 'Expected role key')
+test.serial('Get user: non-existing user', async t => {
+  const docUserId = '01-id'
+
+  let userInfo = await userService.findById(docUserId)
+
+  t.is(userInfo.responseCode, 200, 'Expected response code to be 200')
+  t.is(userInfo.hasOwnProperty('message'), true, 'Expected message key')
+  t.is(userInfo.hasOwnProperty('data'), true, 'Expected data key')
+  t.is(userInfo.message, 'No existing data', 'Expected response message')
+  t.deepEqual(userInfo.data, {}, 'Expected empty object')
+})
+
+test.serial('Get user: error response', async t => {
+  const docUserId = '00_id'
+
+  userService.collection = {
+    findOne: sinon.stub().rejects(new Error('Error getting user information')),
+  }
+
+  let userInfo = await userService.findById(docUserId)
+
+  t.is(userInfo.responseCode, 500, 'Expected response code to be 500')
+  t.is(userInfo.hasOwnProperty('message'), true, 'Expected message key')
+  t.is(userInfo.hasOwnProperty('data'), true, 'Expected data key')
+  t.deepEqual(userInfo.data, {}, 'Expected empty object')
 })
 
 test.serial('Update user', async t => {
