@@ -114,6 +114,31 @@ test.serial('Get user: retrieve data', async t => {
   )
 })
 
+test.serial('Get user: error retrieving data', async t => {
+  const userId = 'user_id'
+  const req = mockRequest({
+    params: {
+      id: userId,
+    },
+  })
+  const res = mockResponse()
+
+  const expectedUserServiceResponse = {
+    status: 'ERROR',
+    data: {},
+    message: 'Error getting user information',
+  }
+
+  mockUserService.findById.withArgs(userId).throws(new Error('Error getting user information'))
+
+  await userController.get(req, res)
+
+  t.true(res.status.called, 'Expected response status was executed')
+  t.true(res.status.calledWith(500), 'Expected response status with error response')
+  t.true(res.json.called, 'Expected response json was executed')
+  t.deepEqual(res.json.args[0][0], expectedUserServiceResponse)
+})
+
 test.serial('Create user: validate params', async t => {
   const req = mockRequest({
     body: {
