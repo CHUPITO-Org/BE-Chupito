@@ -13,22 +13,16 @@ const get = async (request, response) => {
     return response.status(400).json(baseController.getErrorResponse('Parameter is missing'))
   }
 
-  let responseCode
-  let responseData
-  let requestedUserId = request.params.id
-
   try {
-    const userData = await userService.findById(requestedUserId)
+    const { responseCode, data, message } = await userService.findById(request.params.id)
 
-    responseCode = userData.responseCode
-    responseData = baseController.getSuccessResponse(userData.data, userData.message)
+    return response.status(responseCode).json(baseController.getSuccessResponse(data, message))
   } catch (err) {
-    responseCode = 500
     console.error('Error getting user information: ', err)
-    responseData = baseController.getErrorResponse('Error getting user information')
+    return response
+      .status(500)
+      .json(baseController.getErrorResponse('Error getting user information'))
   }
-
-  return response.status(responseCode).json(responseData)
 }
 
 const getByUid = async (request, response) => {
