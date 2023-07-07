@@ -98,7 +98,7 @@ class UserService extends BaseService {
         'User is an attendee of the event.'
       )
     } catch (err) {
-      return (this.getErrorResponse('Error getting user information'))
+      return this.getErrorResponse('Error getting user information')
     }
   }
 

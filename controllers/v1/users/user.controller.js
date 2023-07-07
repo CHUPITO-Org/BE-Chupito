@@ -8,20 +8,22 @@ let baseController = new BaseController()
 
 const get = async (request, response) => {
   const userService = await serviceContainer('users')
+  let errorResponse
 
   if (!request.params.id) {
-    return response.status(400).json(baseController.getErrorResponse('Parameter is missing'))
+    errorResponse = baseController.getErrorResponse('Parameter is missing')
+    return response.status(400).json(errorResponse)
   }
 
   try {
     const { responseCode, data, message } = await userService.findById(request.params.id)
-
-    return response.status(responseCode).json(baseController.getSuccessResponse(data, message))
+    
+    const successResponse = baseController.getSuccessResponse(data, message)
+    return response.status(responseCode).json(successResponse)
   } catch (err) {
     console.error('Error getting user information: ', err)
-    return response
-      .status(500)
-      .json(baseController.getErrorResponse('Error getting user information'))
+    errorResponse = baseController.getErrorResponse('Error getting user information')
+    return response.status(500).json(errorResponse)
   }
 }
 
