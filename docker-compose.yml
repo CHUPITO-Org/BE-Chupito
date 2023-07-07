@@ -13,7 +13,7 @@ services:
 
   app:
     build:
-      context: BE-CHUPITO/
+      context: ./
       dockerfile: Dockerfile
     image: be-chupito
     ports:
